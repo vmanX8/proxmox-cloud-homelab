@@ -32,15 +32,32 @@ Rather than following tutorials without understanding the underlying concepts, I
 - Diagnosed and recovered network connectivity after a driver reload.
 - Successfully verified Wake-on-LAN from a full shutdown using a Magic Packet from a Windows PC.
 
+
 ## Labs & Documentation
 
-### Wake-on-LAN with a custom Ethernet driver
+This homelab is documented through a series of hands-on labs covering infrastructure setup, Linux networking, troubleshooting, and automation.
 
-The first documented troubleshooting case focuses on enabling Wake-on-LAN support for the Qualcomm Atheros AR8162 Ethernet adapter.
+Each lab documents the technical decisions, implementation steps, challenges encountered, and lessons learned.
 
-The original driver did not expose the required Wake-on-LAN functionality. After installing the modified [`alx-wol`](https://github.com/AndiWeiss/alx-wol) kernel module, remote power-on was successfully tested over the local network.
+| Lab | Topic | Documentation |
+|---|---|---|
+| 01 | Proxmox VE Installation & Host Verification | [View Lab 01](docs/01-proxmox-installation.md) |
+| 02 | Linux Networking & Bridge Configuration | [View Lab 02](docs/02-linux-networking.md) |
+| 03 | Wake-on-LAN & `alx-wol` DKMS Driver | [View Lab 03](docs/03-wake-on-lan-alx-dkms.md) |
 
-**Case study:** [Wake-on-LAN on Proxmox VE with `alx-wol` (DKMS)](docs/03-wake-on-lan-alx-dkms.md)
+### Featured Case Study — Wake-on-LAN & Driver Troubleshooting
+
+**Challenge:** The Toshiba Satellite C75-A's Qualcomm Atheros AR8162 Ethernet adapter did not expose Wake-on-LAN capabilities through the default Linux `alx` driver.
+
+**Approach:** Integrated the community-maintained [`alx-wol`](https://github.com/AndiWeiss/alx-wol) kernel module using DKMS, investigated a network connectivity failure caused by the driver reload, and restored the Linux bridge configuration.
+
+**Outcome:** Successfully verified Wake-on-LAN from a full shutdown using a Magic Packet sent from a Windows PC over the local network.
+
+**Key concepts:** Linux kernel modules, DKMS, device drivers, network interfaces, Linux bridging, and systematic troubleshooting.
+
+[Read the full troubleshooting case study](docs/03-wake-on-lan-alx-dkms.md)
+
+---
 
 ## Wake-on-LAN Utility
 
