@@ -40,7 +40,7 @@ The first documented troubleshooting case focuses on enabling Wake-on-LAN suppor
 
 The original driver did not expose the required Wake-on-LAN functionality. After installing the modified [`alx-wol`](https://github.com/AndiWeiss/alx-wol) kernel module, remote power-on was successfully tested over the local network.
 
-Detailed documentation will be added under `docs/`.
+**Case study:** [Wake-on-LAN on Proxmox VE with `alx-wol` (DKMS)](docs/03-wake-on-lan-alx-dkms.md)
 
 ## Learning Roadmap
 
