@@ -42,6 +42,83 @@ The original driver did not expose the required Wake-on-LAN functionality. After
 
 **Case study:** [Wake-on-LAN on Proxmox VE with `alx-wol` (DKMS)](docs/03-wake-on-lan-alx-dkms.md)
 
+## Wake-on-LAN Utility
+
+The repository includes a reusable PowerShell script for sending Wake-on-LAN Magic Packets from Windows.
+
+**Script:** [`scripts/Wake-Proxmox.ps1`](scripts/Wake-Proxmox.ps1)
+
+### Usage
+
+Run the script from PowerShell in the repository's root directory:
+
+```powershell
+.\scripts\Wake-Proxmox.ps1 `
+    -MacAddress "AA:BB:CC:DD:EE:FF" `
+    -BroadcastAddress "192.168.1.255"
+```
+
+Replace the example MAC address and broadcast address with values appropriate for your network.
+
+### Parameters
+
+
+| Parameter | Description | Required |
+|---|---|---|
+| `MacAddress` | Target device MAC address | Yes |
+| `BroadcastAddress` | Destination broadcast IPv4 address | Yes |
+| `Port` | UDP port (default: 9) | No |
+| `SourceIPAddress` | Local IP used to send the packet | No |
+| `TargetIPAddress` | Server IP used for TCP availability checks | No |
+| `TargetPort` | Target TCP port (default: 8006) | No |
+| `MaxAttempts` | Maximum TCP checks (default: 18) | No |
+| `IntervalSeconds` | Delay between checks (default: 5) | No |
+| `OpenBrowser` | Open the target URL in the default browser | No |
+
+
+### Requirements
+
+- Windows PowerShell or PowerShell with .NET networking support.
+- A target device configured to support Wake-on-LAN.
+- A network path that permits delivery of the Magic Packet.
+- A PowerShell execution policy that permits running the script.
+
+**Note:** When `TargetIPAddress` is provided, the script also verifies TCP connectivity to the specified port. This confirms service reachability, not full application health or definitive proof that the Magic Packet caused the device to power on.
+
+The utility was successfully tested with a Toshiba Satellite C75-A running Proxmox VE 9.2.2, using the community-maintained `alx-wol` driver.
+
+
+### Wake and Check Server Availability
+
+```powershell
+.\scripts\Wake-Proxmox.ps1 `
+    -MacAddress "AA:BB:CC:DD:EE:FF" `
+    -BroadcastAddress "192.168.1.255" `
+    -TargetIPAddress "192.168.1.100" `
+    -OpenBrowser
+```
+
+The script checks whether the target service is already reachable.
+If it is offline, the script sends a Magic Packet and periodically
+checks TCP connectivity until the service becomes reachable or
+the maximum number of attempts is reached.
+
+The `-OpenBrowser` switch optionally opens the server URL when
+TCP connectivity has been confirmed.
+
+### Exit Codes
+
+| Code | Meaning |
+|---|---|
+| `0` | Packet sent successfully, or target service reachable |
+| `1` | Target service did not become reachable within the configured checks |
+
+Exit code `0` does not guarantee that the device powered on
+when no availability check was requested.
+
+**Note:** TCP connectivity confirms that the specified port accepts
+connections. It does not perform a full application health check.
+
 ## Learning Roadmap
 
 Planned areas of exploration include:

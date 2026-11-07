@@ -10,8 +10,44 @@ param(
 
     [int]$Port = 9,
 
-    [string]$SourceIPAddress
+    [string]$SourceIPAddress,
+
+    [string]$TargetIPAddress,
+
+    [int]$TargetPort = 8006,
+
+    [switch]$OpenBrowser,
+
+    [ValidateRange(1, 120)]
+    [int]$MaxAttempts = 18,
+
+    [ValidateRange(1, 60)]
+    [int]$IntervalSeconds = 5
 )
+
+# Check whether the target is already reachable
+if ($TargetIPAddress) {
+
+    Write-Host "Checking server availability..."
+
+    $isOnline = Test-NetConnection `
+        -ComputerName $TargetIPAddress `
+        -Port $TargetPort `
+        -InformationLevel Quiet `
+        -WarningAction SilentlyContinue
+
+    if ($isOnline) {
+        Write-Host "[OK] Server is already reachable on TCP port $TargetPort."
+        $url = "https://${TargetIPAddress}:$TargetPort"
+        Write-Host "Open Proxmox Web GUI: $url"
+        if ($OpenBrowser) {
+            Start-Process $url
+        }
+        exit 0
+    }
+
+    Write-Host "[INFO] Server is not reachable. Sending Wake-on-LAN packet..."
+}
 
 # Convert the MAC address into 6 bytes
 $macBytes = [byte[]](
@@ -64,3 +100,38 @@ finally {
         $udp.Close()
     }
 }
+
+
+# Wait for the target service after sending the Magic Packet
+if ($TargetIPAddress) {
+
+    Write-Host "[INFO] Waiting for server availability..."
+
+    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
+
+        Start-Sleep -Seconds $intervalSeconds
+
+        $isOnline = Test-NetConnection `
+            -ComputerName $TargetIPAddress `
+            -Port $TargetPort `
+            -InformationLevel Quiet `
+            -WarningAction SilentlyContinue
+
+        if ($isOnline) {
+            Write-Host "[SUCCESS] Server is reachable!"
+            $url = "https://${TargetIPAddress}:$TargetPort"
+            if ($OpenBrowser) {
+                Start-Process $url
+            }
+            Write-Host "Open Proxmox Web GUI: $url"
+            exit 0
+        }
+
+        Write-Host "[WAIT] Attempt $attempt of $maxAttempts..."
+    }
+
+    Write-Warning "Server did not become reachable after $maxAttempts checks."
+    exit 1
+}
+# Successful completion when no target availability check was requested
+exit 0
