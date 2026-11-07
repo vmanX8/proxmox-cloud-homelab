@@ -136,6 +136,25 @@ when no availability check was requested.
 **Note:** TCP connectivity confirms that the specified port accepts
 connections. It does not perform a full application health check.
 
+### Windows Launcher Verification
+
+A local Windows `.cmd` launcher was configured to execute the
+PowerShell utility with the homelab-specific parameters.
+
+The launcher was successfully tested with the Proxmox host
+fully shut down, confirming remote wake-up and subsequent
+availability of the Web GUI.
+
+**NExample:**
+
+```bat
+@echo off
+title Proxmox Wake-on-LAN
+powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File "[Full Windows project location]\scripts\Wake-Proxmox.ps1" -MacAddress "AA:BB:CC:DD:EE:FF" -BroadcastAddress "192.168.1.255" -SourceIPAddress "192.168.1.x" -TargetIPAddress "192.168.1.x" -OpenBrowser
+echo Script exit code: %ERRORLEVEL%
+pause
+```
+
 ## Learning Roadmap
 
 Planned areas of exploration include:
