@@ -1,4 +1,4 @@
-# Wake-on-LAN on Proxmox VE with `alx-wol` (DKMS)
+# Lab 04 — Wake-on-LAN on Proxmox VE with `alx-wol` (DKMS)
 
 ## Overview
 
