@@ -80,7 +80,7 @@ Run the script from PowerShell in the repository's root directory:
     -BroadcastAddress "192.0.2.255"
 ```
 
-Replace the example MAC address and broadcast address with values appropriate for your network.
+The MAC and the TEST-NET IPv4 examples are illustrative only. Replace them with the correct values for your actual network before running.
 
 ### Parameters
 
@@ -116,7 +116,7 @@ The utility was successfully tested with a Toshiba Satellite C75-A running Proxm
 .\scripts\Wake-Proxmox.ps1 `
     -MacAddress "AA:BB:CC:DD:EE:FF" `
     -BroadcastAddress "192.0.2.255" `
-    -TargetIPAddress "192.168.1.100" `
+    -TargetIPAddress "192.0.2.10" `
     -OpenBrowser
 ```
 
