@@ -157,16 +157,16 @@ The existing `scripts/Wake-Proxmox.ps1` in this repository is a **different** ut
 - The Proxmox interface was reached via its private Tailnet endpoint. No public forwarding of TCP `8006` was configured as part of this lab.
 - Tailscale encryption does not replace Proxmox authentication, Tailnet grants/ACLs, device security, or MFA. **A dedicated grants/ACLs audit and MFA hardening were not part of the verified implementation.**
 - The ESP32 adaptation is **not production-secure**. Its repository documents unverified DERP TLS server certificates and a wake-command authorization model still requiring review. Do not publicly expose the ESP32 UDP listener.
-- High ICMP latency and unsuccessful TSMP/DISCO probes are analyzed below in [Troubleshooting — gateway reachability](#troubleshooting--gateway-reachability). These diagnostics do not invalidate the verified HTTPS management access.
+- High ICMP latency and unsuccessful TSMP/DISCO probes are analyzed below in [Troubleshooting and gateway reachability](#troubleshooting-and-gateway-reachability). These diagnostics do not invalidate the verified HTTPS management access.
 - TCP port readiness is not proof of successful authentication, VM readiness, or overall system health. Manual Web UI login was verified separately.
 - The work laptop was authorized to use Tailscale; this is not a recommendation to bypass workplace security controls.
 - Long-term reliability, reconnections, monitoring, guest VM connectivity, and security policy hardening remain unverified.
 
-### Troubleshooting — gateway reachability
+### Troubleshooting and gateway reachability
 
 Windows ICMP probes reached the ESP32, while default Tailscale DISCO and TSMP probes timed out. These probes exercise different paths from the application UDP wake listener. An ICMP reply confirms network reachability, not successful delivery of a UDP wake request. Conversely, a failed default Tailscale ping alone does not prove application UDP is unavailable.
 
-The observed ESP32 transport used DERP relay; direct peer-to-peer UDP was not validated. For firmware implementation, protocol limitations and security evidence, see the separately maintained [ESP32 firmware validation report](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md). The final cross-repository Lab 06 will provide the full gateway-specific troubleshooting section.
+The observed ESP32 transport used DERP relay; direct peer-to-peer UDP was not validated. For firmware implementation, protocol limitations and security evidence, see the separately maintained [ESP32 firmware validation report](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md). A separate [ESP32 firmware validation report](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md) documents gateway-specific security and reliability limits.
 
 **Important:** Do not send a literal application `ping` to UDP port `9999` on the currently tested firmware: any received UDP payload may trigger a WoL packet. Use non-destructive ICMP diagnostics instead.
 
