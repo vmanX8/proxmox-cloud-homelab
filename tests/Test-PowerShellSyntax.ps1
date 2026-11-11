@@ -20,7 +20,7 @@ foreach($relative in $paths) {
     [void][System.Management.Automation.Language.Parser]::ParseFile(
         $path,[ref]$tokens,[ref]$parseErrors
     )
-    if(@($parseErrors).Count -gt 0) {
+    if($null -ne $parseErrors -and $parseErrors.Count -gt 0) {
         $failed=$true
         Write-Host ("[FAIL] " + $relative)
         foreach($err in $parseErrors) { Write-Warning $err.Message }
