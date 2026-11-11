@@ -9,6 +9,7 @@ $paths=@(
   'scripts/Setup-Proxmox.ps1',
   'tests/Test-WakeToTcp.ps1',
   'tests/Test-Esp32UdpAck.ps1',
+  'tests/Test-TailscaleDiagnostics.ps1',
   'tests/Test-PowerShellSyntax.ps1'
 )
 $failed=$false
