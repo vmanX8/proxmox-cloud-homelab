@@ -1,7 +1,5 @@
 # Lab 04 — Wake-on-LAN on Proxmox VE with `alx-wol` (DKMS)
 
-> **Numbering:** Lab 04 under the current roadmap. The legacy filename is retained until the owner performs the repository migration.
-
 ## Overview
 
 **Status:** Successfully tested on the local network, including power-on from a full shutdown.
