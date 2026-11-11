@@ -7,6 +7,7 @@
 | Script | Side effects | Purpose |
 | --- | --- | --- |
 | [`Test-PowerShellSyntax.ps1`](../tests/Test-PowerShellSyntax.ps1) | Read-only | Parse all checked-in PowerShell files using the Windows PowerShell AST parser |
+| [`Test-TailscaleDiagnostics.ps1`](../tests/Test-TailscaleDiagnostics.ps1) | Read-only | ICMP reachability and optional TSMP/DISCO comparison without wake datagrams |
 | [`Test-WakeToTcp.ps1`](../tests/Test-WakeToTcp.ps1) | Read-only by default | Time from test start to first observed TCP/8006 readiness; optional **one real UDP wake trigger** with `-SendWake` |
 | [`Test-Esp32UdpAck.ps1`](../tests/Test-Esp32UdpAck.ps1) | **Sends real wake triggers** | Sample UDP `ok` ACK delivery/RTT/source-port correlation; requires `-AllowWakePackets` |
 | [`Wake-Proxmox-VPN.ps1`](../scripts/Wake-Proxmox-VPN.ps1) | Sends real wake triggers | Operational ESP32/Tailscale launcher client with independent TCP polling |
