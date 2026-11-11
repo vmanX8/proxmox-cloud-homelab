@@ -143,7 +143,7 @@ During external access testing, different Tailscale and ICMP probes produced dif
 
 These probes use different protocol paths. The observed gateway relied on DERP-relayed traffic; direct peer-to-peer UDP was not validated.
 
-See [Lab 06 — Troubleshooting: DERP-only connectivity diagnostics](06-esp32-remote-wol-gateway.md#troubleshooting--derp-only-connectivity-diagnostics) for the gateway-specific explanation, current firmware constraints and non-destructive alternatives.
+See [Lab 06 — Troubleshooting and connectivity diagnostics](06-esp32-remote-wol-gateway.md#4-troubleshooting-and-connectivity-diagnostics) for the gateway-specific explanation, current firmware constraints and non-destructive alternatives.
 
 ## 6. Security boundaries and limitations
 
