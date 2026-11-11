@@ -32,7 +32,7 @@ pause
 goto menu
 
 :remote
-powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File "%DIR%Wake-Proxmox-VPN.ps1" -Esp32IPAddress "%ESP32_TS_IP%" -TargetIPAddress "%PROXMOX_TS_IP%" -UdpPort %WAKE_UDP_PORT% -TargetPort %TARGET_TCP_PORT% -MaxAttempts %TCP_ATTEMPTS% -IntervalSeconds %TCP_INTERVAL% -OpenBrowser
+powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File "%DIR%Wake-Proxmox-VPN.ps1" -Esp32IPAddress "%ESP32_TS_IP%" -TargetIPAddress "%PROXMOX_TS_IP%" -UdpPort %WAKE_UDP_PORT% -TargetPort %TARGET_TCP_PORT% -MaxAttempts %TCP_ATTEMPTS% -IntervalSeconds %TCP_INTERVAL% -MaxPingAttempts %MAX_PING_ATTEMPTS% -OpenBrowser
 set "RESULT=%ERRORLEVEL%"
 echo Remote exit code: %RESULT%
 pause
