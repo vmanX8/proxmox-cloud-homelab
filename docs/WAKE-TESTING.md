@@ -21,7 +21,15 @@ All addresses shown below are **non-operational examples**. Substitute authorize
 
 **Expected:** every script reports PASS, exit code `0`. A failure means parsing should be fixed before runtime or network tests. This is a static syntax test only, not proof of correctness.
 
-## 2. Non-destructive service-readiness observation
+## 2. Tailscale connectivity diagnostics (read-only)
+
+```powershell
+.\tests\Test-TailscaleDiagnostics.ps1 -Esp32IPAddress "198.51.100.20" -Count 3
+```
+
+The default runs Windows ICMP and Tailscale ICMP without sending application traffic. Add `-IncludeDiscoDiagnostics` to include TSMP and default DISCO probes. Results do not prove the UDP/9999 listener will acknowledge a wake trigger. This script does not perform an application-level UDP ping, which would trigger WoL on the current firmware.
+
+## 3. Non-destructive service-readiness observation
 
 ```powershell
 .\tests\Test-WakeToTcp.ps1 -ProxmoxIPAddress "198.51.100.10" -TimeoutSeconds 300
@@ -39,7 +47,7 @@ One ASCII `wake\n` datagram is submitted to ESP32 UDP/9999 and the client polls 
 
 A previous physically separate integration test observed **31.7 seconds**; the test harness here is intended for reproduction, **not** a claim that it produced that historic result.
 
-## 3. Application UDP ACK sample (destructive)
+## 4. Application UDP ACK sample (destructive)
 
 **Warning:** The current ESP32 listener treats **any** application UDP datagram as a wake command. Never use an application `ping` payload for health checking. Confirm the destination belongs to your own device before proceeding.
 
@@ -53,7 +61,7 @@ This runs 10 separate UDP wake requests and listens for the ESP32 `ok` ACK, with
 
 **Important distinction:** a sender's UDP send count, an ESP32 ACK and a live Proxmox HTTPS service measure *three different stages*.
 
-## 4. Launcher: strict ping vs configurable bypass
+## 5. Launcher: strict ping vs configurable bypass
 
 The initial remote launcher candidate uses three strict default Tailscale pings before sending. A failed default ping could prevent a working DERP-only gateway from receiving wake traffic.
 
@@ -66,7 +74,7 @@ The follow-up code exposes `MAX_PING_ATTEMPTS` as a local setting:
 
 A default DISCO ping failure is **not** equivalent to UDP wake failure. For this experimental firmware, `0` is the practical setup choice; it is not a bypass for authentication or access controls. Keep ESP32 in an authorized Tailnet with appropriate grants/ACLs.
 
-## 5. Windows acceptance matrix (not yet run on these PR versions)
+## 6. Windows acceptance matrix (not yet run on these PR versions)
 
 | Scenario | Expected behaviour |
 | --- | --- |
