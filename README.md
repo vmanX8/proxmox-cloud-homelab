@@ -43,7 +43,8 @@ Each lab documents the technical decisions, implementation steps, challenges enc
 |---|---|---|
 | 01 | Proxmox VE Installation & Host Verification | [View Lab 01](docs/01-proxmox-installation.md) |
 | 02 | Linux Networking & Bridge Configuration | [View Lab 02](docs/02-linux-networking.md) |
-| 03 | Wake-on-LAN & `alx-wol` DKMS Driver | [View Lab 03](docs/03-wake-on-lan-alx-dkms.md) |
+| 03 | Tailscale VPN & Remote Access | [View Lab 03](docs/03-tailscale-remote-access.md) |
+| 04 | Wake-on-LAN & `alx-wol` DKMS Driver | [View Lab 04](docs/03-wake-on-lan-alx-dkms.md) |
 
 ### Featured Case Study — Wake-on-LAN & Driver Troubleshooting
 
@@ -155,6 +156,16 @@ echo Script exit code: %ERRORLEVEL%
 pause
 ```
 
+## Remote Access — Tailscale (Lab 03)
+
+Tailscale is installed on the Proxmox host and was tested from a tablet over mobile data and from an authorized Windows work laptop. No public forwarding of TCP `8006` was required. The remote Web UI login and dashboard were verified on both client types; shell and remote shutdown were additionally verified from the tablet.
+
+An ESP32-WROOM-32D gateway separately accepts a Tailscale UDP wake trigger (`wake\n`, port `9999`) and sends a local WoL Magic Packet. On **11 November 2026**, one controlled wake-to-TCP-ready test recorded **31.7 seconds** from UDP send to first observed TCP `8006` connection. The result measures service reachability, not full host/guest boot time; the physical shutdown state was not independently observed for that specific run.
+
+See [Lab 03 — Tailscale VPN & Remote Access](docs/03-tailscale-remote-access.md) and the [ESP32-WoL gateway repository](https://github.com/vmanX8/ESP32-WoL). Tailscale TSMP/DISCO timeouts, high observed ICMP latency, and the gateway's known TLS verification and wake-command authorization concerns remain separate unresolved investigations. **This is a learning lab, not a production-secure deployment.**
+
+**Numbering note:** The established WoL report is logically **Lab 04** but temporarily retains its original `docs/03-wake-on-lan-alx-dkms.md` path. Renaming/migration is intentionally deferred.
+
 ## Learning Roadmap
 
 Planned areas of exploration include:
@@ -163,7 +174,7 @@ Planned areas of exploration include:
 - Virtual networking and infrastructure security
 - Storage management and backups
 - Docker workloads within virtual machines
-- Secure remote administration
+- Improve remote administration security (ACL/grants review and MFA)
 - Monitoring and infrastructure automation
 
 These are learning objectives, not completed implementations.
