@@ -10,7 +10,7 @@
 | Ethernet `nic0`, Linux bridge `vmbr0` | Physical LAN connection and bridge for management/future guests | Bridge connectivity and recovery verified |
 | Modified `alx-wol` DKMS module | Allow AR8162 Ethernet NIC to react to LAN Magic Packets | Wake from complete shutdown verified |
 | Windows PowerShell WoL utility | Local LAN packet sender and optional TCP availability polling | Success, negative, regression and launcher tests |
-| Proxmox Tailscale configuration | Access when the powered-on host is reachable remotely | Closure report HL-03 marked complete; detailed evidence pending transcription in Lab 03 |
+| Proxmox Tailscale configuration | Authenticated private remote administration while the host is running | Web UI login and dashboard verified from an external tablet and an authorized Windows laptop; [Lab 03](03-tailscale-vpn-remote-access.md) |
 | ESP32-WROOM-32D gateway | Independently powered Tailscale-to-LAN wake bridge | Two end-to-end wakes with DERP observed; security work remains |
 
 ## Management network (when the host is powered on)
@@ -20,7 +20,7 @@ Client -- private Tailscale connection --> powered-on Proxmox
                                            management interface
 ```
 
-Lab 03 will document the concrete access test matrix when verified against its closure report. Do not infer that the host can accept an inbound VPN connection while physically shut down.
+Authenticated external management access and gateway-assisted wake-to-service validation are detailed in [Lab 03](03-tailscale-vpn-remote-access.md). The Proxmox host cannot receive its own VPN traffic when physically shut down.
 
 ## Local or remote power-on
 
