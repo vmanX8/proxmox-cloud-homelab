@@ -158,7 +158,7 @@ pause
 
 ## Remote Access — Tailscale (Lab 03)
 
-Tailscale is installed on the Proxmox host and was tested from a tablet over mobile data and from an authorized Windows work laptop. No public forwarding of TCP `8006` was required. The remote Web UI login and dashboard were verified on both client types; shell and remote shutdown were additionally verified from the tablet.
+Tailscale is installed on the Proxmox host and was tested from a tablet over mobile data and from an authorized Windows remote laptop. No public forwarding of TCP `8006` was required. The remote Web UI login and dashboard were verified on both client types; shell and remote shutdown were additionally verified from the tablet.
 
 An ESP32-WROOM-32D gateway separately accepts a Tailscale UDP wake trigger (`wake\n`, port `9999`) and sends a local WoL Magic Packet. A controlled wake-to-TCP-ready test recorded **31.7 seconds** from UDP send to first observed TCP `8006` connection. The result measures service reachability, not full host/guest boot time; the physical shutdown state was not independently observed for that specific run.
 
