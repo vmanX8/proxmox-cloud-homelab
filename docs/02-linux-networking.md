@@ -1,6 +1,6 @@
 # Linux Networking on a Proxmox VE Host
 
-> **Lab 02 — Completed configuration / documented retrospectively**  
+> **Lab 02 — Network configuration verified**  
 > **Scope:** Wired management networking and a Linux bridge (`vmbr0`) on a single Proxmox VE host.
 
 ## Objective
