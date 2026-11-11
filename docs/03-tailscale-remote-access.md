@@ -1,6 +1,6 @@
 # Lab 03 — Tailscale VPN & Remote Access
 
-> **Status:** Functional acceptance passed (11 November 2026). Ongoing security review is tracked separately.
+> **Status:** Authenticated remote administration functionally validated; security hardening and long-term reliability remain open.
 >
 > **Scope:** Private VPN management access to a single Proxmox VE host, including an externally triggered wake-to-ready test. This is a learning homelab, **not a production-secure remote administration solution**.
 
@@ -50,7 +50,7 @@ Work laptop with Tailscale
 
 The Proxmox management IP remains assigned to `vmbr0`, which uses the physical Ethernet interface `nic0`. Tailscale adds its own virtual overlay interface rather than replacing this bridge. No subnet router or exit node was configured in this lab.
 
-The ESP32 firmware is a separate, adapted third-party project; see [ESP32-WoL](https://github.com/vmanX8/ESP32-WoL). The earlier local-WoL driver work belongs to **Lab 04**, currently retained at a legacy filename: [WoL & alx DKMS](03-wake-on-lan-alx-dkms.md).
+The ESP32 firmware is a separate, adapted third-party project; see [ESP32-WoL](https://github.com/vmanX8/ESP32-WoL). The Ethernet WoL prerequisite is documented in [Lab 04 — Wake-on-LAN & alx DKMS](03-wake-on-lan-alx-dkms.md).
 
 ## 3. Installation and host checks — executed
 
@@ -88,7 +88,7 @@ tailscale ip -4
 
 ## 4. External access validation
 
-### Initial tablet test — passed
+### Remote tablet administration
 
 With the tablet using mobile data / hotspot rather than the home LAN, the remote user:
 
@@ -99,7 +99,7 @@ With the tablet using mobile data / hotspot rather than the home LAN, the remote
 
 This demonstrates authenticated management from a different network; **remote shutdown is not remote power-on**.
 
-### Final work-laptop acceptance — 11 November 2026
+### Remote work-laptop administration and wake-to-service test
 
 A Windows work laptop joined the Tailnet and saw the Proxmox and ESP32 peers. Basic ICMP reachability to the ESP32 was accepted for this lab, while TSMP/DISCO diagnostic timeouts remain separate known issues.
 
@@ -129,7 +129,7 @@ Test-NetConnection <PROXMOX_TAILSCALE_IP> -Port 8006 -InformationLevel Quiet
 
 The controlled test used **one** UDP send to the ESP32 Tailnet IP on port `9999`. A Windows `UdpClient.Send()` return value of 5 indicates that the local socket accepted a 5-byte payload; it does not prove a remote acknowledgement. The successful service recovery after the trigger, together with earlier independent ESP32 wake demonstrations, supports the operational end-to-end conclusion.
 
-**Exact timestamps from the final test (local clock):**
+**Timing sample (test clock):**
 
 ```text
 T0 — UDP send:                 15:22:32.016
@@ -155,12 +155,20 @@ The existing `scripts/Wake-Proxmox.ps1` in this repository is a **different** ut
 ## 5. Security, known limitations, and scope boundaries
 
 - The Proxmox interface was reached via its private Tailnet endpoint. No public forwarding of TCP `8006` was configured as part of this lab.
-- Tailscale encryption does not replace Proxmox authentication, Tailnet grants/ACLs, device security, or MFA. **No dedicated ACL/grants audit or MFA hardening was validated in this chat.**
+- Tailscale encryption does not replace Proxmox authentication, Tailnet grants/ACLs, device security, or MFA. **A dedicated grants/ACLs audit and MFA hardening were not part of the verified implementation.**
 - The ESP32 adaptation is **not production-secure**. Its repository documents unverified DERP TLS server certificates and a wake-command authorization model still requiring review. Do not publicly expose the ESP32 UDP listener.
-- The observed high ICMP latency and TSMP/DISCO failures are tracked in the **HL-06 / HL-R06** investigations; they do not invalidate the basic external management acceptance test.
+- High ICMP latency and unsuccessful TSMP/DISCO probes are analyzed below in [Troubleshooting — gateway reachability](#troubleshooting--gateway-reachability). These diagnostics do not invalidate the verified HTTPS management access.
 - TCP port readiness is not proof of successful authentication, VM readiness, or overall system health. Manual Web UI login was verified separately.
 - The work laptop was authorized to use Tailscale; this is not a recommendation to bypass workplace security controls.
 - Long-term reliability, reconnections, monitoring, guest VM connectivity, and security policy hardening remain unverified.
+
+### Troubleshooting — gateway reachability
+
+Windows ICMP probes reached the ESP32, while default Tailscale DISCO and TSMP probes timed out. These probes exercise different paths from the application UDP wake listener. An ICMP reply confirms network reachability, not successful delivery of a UDP wake request. Conversely, a failed default Tailscale ping alone does not prove application UDP is unavailable.
+
+The observed ESP32 transport used DERP relay; direct peer-to-peer UDP was not validated. For firmware implementation, protocol limitations and security evidence, see the separately maintained [ESP32 firmware validation report](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md). The final cross-repository Lab 06 will provide the full gateway-specific troubleshooting section.
+
+**Important:** Do not send a literal application `ping` to UDP port `9999` on the currently tested firmware: any received UDP payload may trigger a WoL packet. Use non-destructive ICMP diagnostics instead.
 
 ## 6. Related labs and lessons learned
 
@@ -173,8 +181,8 @@ The existing `scripts/Wake-Proxmox.ps1` in this repository is a **different** ut
 
 **Lessons:** Separate overlay reachability from local bridging, transport-level readiness from app authentication, shutdown from wake-up, and successful UDP send from proof of remote receipt. The successful work-laptop wake-to-TCP run is a **functional integration result**, not evidence that all security or resilience issues are solved.
 
-## 7. Closure
+## 7. Result
 
-**Lab 03 acceptance: PASS — 11 November 2026.** The core objective (authenticated remote Proxmox administration over Tailscale from outside the home network) was demonstrated on both mobile and work-laptop clients. The optional ESP32 wake integration also passed one controlled service-recovery measurement at **31.7 seconds**. Known ESP32 and network diagnostic issues remain tracked separately.
+**Lab 03 functional acceptance: PASS.** The core objective (authenticated remote Proxmox administration over Tailscale from outside the home network) was demonstrated on both mobile and work-laptop clients. The optional ESP32 wake integration also passed one controlled service-recovery measurement at **31.7 seconds**. Known ESP32 and network diagnostic issues remain tracked separately.
 
-No production-readiness claim is made. No migration/rename of legacy lab filenames is performed in this documentation change.
+No production-readiness claim is made.
