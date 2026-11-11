@@ -1,6 +1,6 @@
 # Proxmox VE Installation and Initial Host Verification
 
-> **Lab 01 — Completed setup / documented retrospectively**  
+> **Lab 01 — Host setup verified**  
 > **Scope:** One repurposed laptop running a single Proxmox VE host. This is a learning homelab, not a production cluster or cloud platform.
 
 ## Objective
@@ -108,4 +108,4 @@ Normal reboots and shutdowns should be initiated with guest workloads taken into
 ## Next labs
 
 - [02 — Linux Networking and the `vmbr0` bridge](02-linux-networking.md)
-- [03 — Wake-on-LAN with `alx-wol` and DKMS](03-wake-on-lan-alx-dkms.md)
+- [04 — Wake-on-LAN with `alx-wol` and DKMS](04-wake-on-lan-alx-dkms.md)

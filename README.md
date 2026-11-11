@@ -31,9 +31,13 @@ Rather than following tutorials without understanding the underlying concepts, I
 - Installed and tested the community-maintained `alx-wol` driver through DKMS.
 - Diagnosed and recovered network connectivity after a driver reload.
 - Successfully verified Wake-on-LAN from a full shutdown using a Magic Packet from a Windows PC.
+- Validated authenticated Proxmox remote management through Tailscale from outside the LAN.
+- Tested ESP32-assisted remote wake and service-reachability monitoring; security and endurance verification remain open.
 
 
 ## Labs & Documentation
+
+[Architecture overview](docs/ARCHITECTURE.md) — host access, LAN WoL and the separately maintained ESP32 gateway.
 
 This homelab is documented through a series of hands-on labs covering infrastructure setup, Linux networking, troubleshooting, and automation.
 
@@ -43,7 +47,10 @@ Each lab documents the technical decisions, implementation steps, challenges enc
 |---|---|---|
 | 01 | Proxmox VE Installation & Host Verification | [View Lab 01](docs/01-proxmox-installation.md) |
 | 02 | Linux Networking & Bridge Configuration | [View Lab 02](docs/02-linux-networking.md) |
-| 03 | Wake-on-LAN & `alx-wol` DKMS Driver | [View Lab 03](docs/03-wake-on-lan-alx-dkms.md) |
+| 03 | Tailscale VPN & Remote Access | [View Lab 03](docs/03-tailscale-vpn-remote-access.md) |
+| 04 | Wake-on-LAN & `alx-wol` DKMS Driver | [View Lab 04](docs/04-wake-on-lan-alx-dkms.md) |
+| 05 | PowerShell Wake-on-LAN Automation | [View Lab 05](docs/05-powershell-wol-automation.md) |
+| 06 | ESP32 Remote Wake-on-LAN Gateway | [View Lab 06](docs/06-esp32-remote-wol-gateway.md) |
 
 ### Featured Case Study — Wake-on-LAN & Driver Troubleshooting
 
@@ -55,7 +62,7 @@ Each lab documents the technical decisions, implementation steps, challenges enc
 
 **Key concepts:** Linux kernel modules, DKMS, device drivers, network interfaces, Linux bridging, and systematic troubleshooting.
 
-[Read the full troubleshooting case study](docs/03-wake-on-lan-alx-dkms.md)
+[Read the full troubleshooting case study](docs/04-wake-on-lan-alx-dkms.md)
 
 ---
 
@@ -63,7 +70,7 @@ Each lab documents the technical decisions, implementation steps, challenges enc
 
 The repository includes a reusable PowerShell script for sending Wake-on-LAN Magic Packets from Windows.
 
-**Script:** [`scripts/Wake-Proxmox.ps1`](scripts/Wake-Proxmox.ps1)
+**Script:** [`scripts/Wake-Proxmox.ps1`](scripts/Wake-Proxmox.ps1) — [Lab 05 implementation and verification](docs/05-powershell-wol-automation.md)
 
 ### Usage
 
@@ -72,10 +79,10 @@ Run the script from PowerShell in the repository's root directory:
 ```powershell
 .\scripts\Wake-Proxmox.ps1 `
     -MacAddress "AA:BB:CC:DD:EE:FF" `
-    -BroadcastAddress "192.168.1.255"
+    -BroadcastAddress "192.0.2.255"
 ```
 
-Replace the example MAC address and broadcast address with values appropriate for your network.
+The MAC and the TEST-NET IPv4 examples are illustrative only. Replace them with the correct values for your actual network before running.
 
 ### Parameters
 
@@ -110,8 +117,8 @@ The utility was successfully tested with a Toshiba Satellite C75-A running Proxm
 ```powershell
 .\scripts\Wake-Proxmox.ps1 `
     -MacAddress "AA:BB:CC:DD:EE:FF" `
-    -BroadcastAddress "192.168.1.255" `
-    -TargetIPAddress "192.168.1.100" `
+    -BroadcastAddress "192.0.2.255" `
+    -TargetIPAddress "192.0.2.10" `
     -OpenBrowser
 ```
 
@@ -145,12 +152,12 @@ The launcher was successfully tested with the Proxmox host
 fully shut down, confirming remote wake-up and subsequent
 availability of the Web GUI.
 
-**NExample:**
+**Example:**
 
 ```bat
 @echo off
 title Proxmox Wake-on-LAN
-powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File "[Full Windows project location]\scripts\Wake-Proxmox.ps1" -MacAddress "AA:BB:CC:DD:EE:FF" -BroadcastAddress "192.168.1.255" -SourceIPAddress "192.168.1.x" -TargetIPAddress "192.168.1.x" -OpenBrowser
+powershell.exe -NoProfile -ExecutionPolicy RemoteSigned -File "[Full Windows project location]\scripts\Wake-Proxmox.ps1" -MacAddress "AA:BB:CC:DD:EE:FF" -BroadcastAddress "192.0.2.255" -SourceIPAddress "192.0.2.x" -TargetIPAddress "192.0.2.x" -OpenBrowser
 echo Script exit code: %ERRORLEVEL%
 pause
 ```
@@ -163,7 +170,7 @@ Planned areas of exploration include:
 - Virtual networking and infrastructure security
 - Storage management and backups
 - Docker workloads within virtual machines
-- Secure remote administration
+- Continued validation and security hardening of remote administration
 - Monitoring and infrastructure automation
 
 These are learning objectives, not completed implementations.

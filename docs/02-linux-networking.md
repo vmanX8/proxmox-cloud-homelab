@@ -1,6 +1,6 @@
 # Linux Networking on a Proxmox VE Host
 
-> **Lab 02 — Completed configuration / documented retrospectively**  
+> **Lab 02 — Network configuration verified**  
 > **Scope:** Wired management networking and a Linux bridge (`vmbr0`) on a single Proxmox VE host.
 
 ## Objective
@@ -78,7 +78,7 @@ An administratively `UP` bridge can still be operationally down when it has no c
 
 ## Real troubleshooting event: driver reload and bridge membership
 
-During [Lab 03](03-wake-on-lan-alx-dkms.md), a community-maintained replacement `alx` kernel module was installed for Wake-on-LAN support. The reload unregistered and recreated the Ethernet interface, and the existing bridge lost its physical member.
+During [Lab 04](04-wake-on-lan-alx-dkms.md), a community-maintained replacement `alx` kernel module was installed for Wake-on-LAN support. The reload unregistered and recreated the Ethernet interface, and the existing bridge lost its physical member.
 
 Symptoms:
 
@@ -137,4 +137,4 @@ A reachable network interface is not sufficient if the Linux bridge is missing i
 ## Related documentation
 
 - [01 — Proxmox VE Installation and Initial Verification](01-proxmox-installation.md)
-- [03 — Wake-on-LAN with `alx-wol` and DKMS](03-wake-on-lan-alx-dkms.md)
+- [04 — Wake-on-LAN with `alx-wol` and DKMS](04-wake-on-lan-alx-dkms.md)
