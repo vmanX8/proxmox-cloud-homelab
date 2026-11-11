@@ -13,7 +13,7 @@ Enable authenticated administration of the Proxmox host from another network wit
 | Host OS at verification | Debian GNU/Linux 13.5 (Trixie) |
 | Ethernet interface and bridge | Qualcomm Atheros AR8162, `nic0`, `vmbr0` |
 | Host VPN | Tailscale daemon (`tailscaled`) installed on Proxmox |
-| Remote clients | Tablet over mobile data/hotspot and an authorized Windows work laptop |
+| Remote clients | Tablet over mobile data/hotspot and an authorized Windows remote laptop |
 | Management service | HTTPS, TCP `8006`; Proxmox login required |
 | Optional wake gateway | Independently powered ESP32-WROOM-32D on the home LAN |
 
@@ -95,10 +95,10 @@ This installation procedure records the tested setup, not a recommendation to pa
 | Tablet Web UI login | **PASS** | Application-level authentication |
 | Tablet Proxmox Shell | **PASS** — `pwd` executed | Authenticated remote shell availability |
 | Tablet remote shutdown | **PASS** | Administrative shutdown, **not** remote power-on |
-| Windows work laptop with Tailscale | **PASS** — Web UI login/dashboard | Authenticated access from a second remote client |
+| Windows remote laptop with Tailscale | **PASS** — Web UI login/dashboard | Authenticated access from a second remote client |
 | Mobile phone dashboard | **PASS** | Additional browser access |
 
-The laptop used an authorized Tailscale installation; this does not bypass workplace security policy.
+The remote client used an authorized Tailscale installation. Tailnet access does not replace Proxmox authentication or device-access policy.
 
 ### Optional ESP32 wake-to-service readiness
 
@@ -114,6 +114,17 @@ A controlled Windows test used a single unicast UDP `wake\n` datagram to the ESP
 The 31.7-second result is **trigger-to-first-observed-TCP-connect**, not BIOS boot time or full VM readiness. The physical shutdown state was **not independently observed for this particular timed run**. Separate physically verified complete-shutdown wake tests are described in [Lab 06](06-esp32-remote-wol-gateway.md).
 
 A successful `UdpClient.Send()` return value indicates local submission, **not** delivery or an ACK from the ESP32. TCP readiness and authenticated Web UI login were separately checked.
+
+### Wake-to-service measurement procedure
+
+The controlled remote-client test followed this sequence:
+
+1. Confirm that the target Proxmox TCP port `8006` is not reachable before sending the trigger.
+2. Record the start of the test, then submit **one** ASCII `wake\n` UDP datagram to the ESP32 Tailscale address on port `9999`.
+3. Poll the Proxmox TCP endpoint with 1.5-second connect timeouts and 3-second intervals, stopping on the first successful connection or after a maximum observation window of 300 seconds.
+4. Record the first observed TCP success and perform a separate browser login to verify the management UI.
+
+The observed **31.7 seconds** measures trigger submission to the first successful TCP probe. It does not measure exact BIOS/OS boot time, validate guest readiness or establish that a UDP acknowledgment was received. The test used a PowerShell procedure on the remote client; it is **not** a claim that the separately developed ESP32 remote launcher is published in this repository.
 
 ### PowerShell diagnostic commands
 

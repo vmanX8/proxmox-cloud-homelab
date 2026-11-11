@@ -45,7 +45,7 @@ The gateway was tested with an Ethernet-connected Toshiba Satellite C75-A runnin
 | Test | Observed result | Verification boundary |
 | --- | --- | --- |
 | Remote wake via Android Tailscale client | Two successful complete-shutdown wake cycles, with a shutdown between attempts | Actual host boot and GUI access |
-| Work-laptop wake and reconnect | Successful remote wake after confirmed shutdown in field tests | Functional remote power-on; repeated reliability still under evaluation |
+| Remote-laptop wake and reconnect | Successful remote wake after confirmed shutdown in field tests | Functional remote power-on; repeated reliability still under evaluation |
 | Proxmox HTTPS availability | TCP `8006` became reachable; Web UI login was separately confirmed | Availability of one service, not full system/VM readiness |
 | Controlled trigger-to-TCP observation | Approximately **31.7 seconds** | Host's physical shutdown state not separately witnessed in that specific timed run |
 
