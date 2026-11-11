@@ -97,7 +97,7 @@ try {
         for($n=1;$n -le 3;$n++) {
             [void]$udp.Send($bytes,$bytes.Length)
             Write-Host "[UDP SENT] Attempt $n/3, waiting for optional ACK."
-            $endpoint=New-Object System.Net.IPEndPoint ([System.Net.IPAddress]::Any),0
+            $endpoint=[System.Net.IPEndPoint]::new([System.Net.IPAddress]::Any,0)
             try {
                 $reply=$udp.Receive([ref]$endpoint)
                 if($endpoint.Address.ToString() -eq $Esp32IPAddress -and
