@@ -8,6 +8,7 @@ param(
     [ValidateRange(1,65535)][int]$TargetPort=8006,
     [ValidateRange(1,120)][int]$MaxAttempts=18,
     [ValidateRange(1,60)][int]$IntervalSeconds=5,
+    [ValidateRange(0,20)][int]$MaxPingAttempts=0,
     [switch]$OpenBrowser
 )
 $ErrorActionPreference='Stop'
@@ -76,15 +77,21 @@ try {
         exit 2
     }
 
-    # Baseline V2: strict ping preflight may block a functional DERP-only ESP32.
-    $pingOk=$false
-    for($p=1;$p -le 3;$p++) {
-        & tailscale ping --c=1 $Esp32IPAddress *> $null
-        if($LASTEXITCODE -eq 0) { $pingOk=$true; break }
+    # Default DISCO probe may fail for a functional DERP-only embedded peer.
+    # Zero skips this optional diagnostic; peer-map and backend checks remain mandatory.
+    if($MaxPingAttempts -eq 0) {
+        Write-Host '[PREFLIGHT] Tailscale ping skipped (MaxPingAttempts=0).'
     }
-    if(-not $pingOk) {
-        Write-Warning 'Preflight ping failed; wake was not attempted.'
-        exit 2
+    else {
+        $pingOk=$false
+        for($p=1;$p -le $MaxPingAttempts;$p++) {
+            & tailscale ping --c=1 $Esp32IPAddress *> $null
+            if($LASTEXITCODE -eq 0) { $pingOk=$true; break }
+        }
+        if(-not $pingOk) {
+            Write-Warning "Tailscale ping failed after $MaxPingAttempts attempts; wake not sent."
+            exit 2
+        }
     }
 
     $udp=New-Object System.Net.Sockets.UdpClient
