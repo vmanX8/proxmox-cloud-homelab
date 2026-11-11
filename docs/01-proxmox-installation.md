@@ -108,4 +108,4 @@ Normal reboots and shutdowns should be initiated with guest workloads taken into
 ## Next labs
 
 - [02 — Linux Networking and the `vmbr0` bridge](02-linux-networking.md)
-- [03 — Wake-on-LAN with `alx-wol` and DKMS](03-wake-on-lan-alx-dkms.md)
+- [04 — Wake-on-LAN with `alx-wol` and DKMS](04-wake-on-lan-alx-dkms.md)
