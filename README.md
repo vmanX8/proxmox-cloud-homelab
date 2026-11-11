@@ -31,6 +31,8 @@ Rather than following tutorials without understanding the underlying concepts, I
 - Installed and tested the community-maintained `alx-wol` driver through DKMS.
 - Diagnosed and recovered network connectivity after a driver reload.
 - Successfully verified Wake-on-LAN from a full shutdown using a Magic Packet from a Windows PC.
+- Validated authenticated Proxmox remote management through Tailscale from outside the LAN.
+- Tested ESP32-assisted remote wake and service-reachability monitoring; security and endurance verification remain open.
 
 
 ## Labs & Documentation
