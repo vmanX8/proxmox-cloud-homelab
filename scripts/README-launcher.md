@@ -24,7 +24,7 @@ The configuration contains local addresses and the target MAC, but must **never*
 
 The remote workflow first checks whether the Proxmox TCP endpoint is already reachable. If not, it checks that the Tailscale backend reports `Running` and the configured ESP32 Tailnet IP appears in the current peer map.
 
-The initial baseline attempts three default Tailscale CLI pings before sending UDP. **This strict ping gate is a known limitation with DERP-only embedded gateways**: default DISCO probes can fail while application UDP works. The follow-up patch makes this configurable, including an explicit bypass.
+A user-configurable `MAX_PING_ATTEMPTS` controls the optional default Tailscale ping preflight: **0 (default) skips it**, while 1–20 performs that many strict checks and aborts on repeated failure. DERP-only embedded gateways may not answer default DISCO probes even when application UDP works. **Bypassing ping does not bypass the mandatory Tailscale backend and peer-map checks.**
 
 Once preflight passes, the client sends up to three unicast application requests. It expects ASCII `ok` from the configured ESP32 source endpoint, but independently polls TCP `8006` because **ACK is not proof of host boot**. An absent ACK also does not conclusively mean the Magic Packet was not sent.
 
