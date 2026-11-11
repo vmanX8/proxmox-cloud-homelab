@@ -1,6 +1,6 @@
 # Proxmox VE Installation and Initial Host Verification
 
-> **Lab 01 — Completed setup / documented retrospectively**  
+> **Lab 01 — Host setup verified**  
 > **Scope:** One repurposed laptop running a single Proxmox VE host. This is a learning homelab, not a production cluster or cloud platform.
 
 ## Objective
