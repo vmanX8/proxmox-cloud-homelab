@@ -146,7 +146,7 @@ The launcher was successfully tested with the Proxmox host
 fully shut down, confirming remote wake-up and subsequent
 availability of the Web GUI.
 
-**NExample:**
+**Example:**
 
 ```bat
 @echo off
@@ -160,11 +160,11 @@ pause
 
 Tailscale is installed on the Proxmox host and was tested from a tablet over mobile data and from an authorized Windows work laptop. No public forwarding of TCP `8006` was required. The remote Web UI login and dashboard were verified on both client types; shell and remote shutdown were additionally verified from the tablet.
 
-An ESP32-WROOM-32D gateway separately accepts a Tailscale UDP wake trigger (`wake\n`, port `9999`) and sends a local WoL Magic Packet. On **11 November 2026**, one controlled wake-to-TCP-ready test recorded **31.7 seconds** from UDP send to first observed TCP `8006` connection. The result measures service reachability, not full host/guest boot time; the physical shutdown state was not independently observed for that specific run.
+An ESP32-WROOM-32D gateway separately accepts a Tailscale UDP wake trigger (`wake\n`, port `9999`) and sends a local WoL Magic Packet. A controlled wake-to-TCP-ready test recorded **31.7 seconds** from UDP send to first observed TCP `8006` connection. The result measures service reachability, not full host/guest boot time; the physical shutdown state was not independently observed for that specific run.
 
 See [Lab 03 — Tailscale VPN & Remote Access](docs/03-tailscale-remote-access.md) and the [ESP32-WoL gateway repository](https://github.com/vmanX8/ESP32-WoL). Tailscale TSMP/DISCO timeouts, high observed ICMP latency, and the gateway's known TLS verification and wake-command authorization concerns remain separate unresolved investigations. **This is a learning lab, not a production-secure deployment.**
 
-**Numbering note:** The established WoL report is logically **Lab 04** but temporarily retains its original `docs/03-wake-on-lan-alx-dkms.md` path. Renaming/migration is intentionally deferred.
+
 
 ## Learning Roadmap
 
