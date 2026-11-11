@@ -78,7 +78,7 @@ An administratively `UP` bridge can still be operationally down when it has no c
 
 ## Real troubleshooting event: driver reload and bridge membership
 
-During [Lab 03](03-wake-on-lan-alx-dkms.md), a community-maintained replacement `alx` kernel module was installed for Wake-on-LAN support. The reload unregistered and recreated the Ethernet interface, and the existing bridge lost its physical member.
+During [Lab 04](03-wake-on-lan-alx-dkms.md), a community-maintained replacement `alx` kernel module was installed for Wake-on-LAN support. The reload unregistered and recreated the Ethernet interface, and the existing bridge lost its physical member.
 
 Symptoms:
 
