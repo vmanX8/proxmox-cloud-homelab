@@ -35,6 +35,8 @@ The public repository now includes the [Windows LAN/Remote launcher](../scripts/
 
 A successful TCP connection to the configured service port confirms reachability **of that port at the time of testing**. It does not independently prove boot causality or full application health. When no target endpoint is provided, exit code `0` confirms that packet sending completed, not that the server woke.
 
+For historical acceptance evidence and reproducibility tools, see [Wake Testing](WAKE-TESTING.md). The test harnesses are reconstructions rather than the exact original ad-hoc scripts and require new Windows validation.
+
 ## Areas for possible improvement
 
 - Parameter input validation for MAC, IP and ports.

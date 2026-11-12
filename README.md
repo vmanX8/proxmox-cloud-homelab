@@ -89,6 +89,10 @@ A typical **local** command (example values only):
 
 The host TCP service becoming reachable is not proof of boot causality, authenticated login or full host health. Historical wake, regression and remote acceptance results are documented in [Lab 05](docs/05-powershell-wol-automation.md) and [Lab 06](docs/06-esp32-remote-wol-gateway.md). The final local scripts were supplied for publication; this exact GitHub revision still requires Windows PowerShell runtime acceptance.
 
+## Reproducible Wake Diagnostics
+
+[Wake-to-TCP, UDP ACK and Tailscale diagnostic tests](docs/WAKE-TESTING.md) summarize the observed historical results separately from newly reconstructed reproducibility utilities. Tests that transmit wake packets require explicit opt-in.
+
 ## Learning Roadmap
 
 Planned areas of exploration include:
