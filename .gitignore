@@ -1,0 +1,10 @@
+# Machine-specific launcher settings
+scripts/proxmox.local.cmd
+**/proxmox.local.cmd
+# Private runtime artifacts
+.env
+.env.*
+!.env.example
+*.log
+*.nvs
+*.bin
