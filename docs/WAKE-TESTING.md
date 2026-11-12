@@ -28,7 +28,7 @@ All addresses shown below are **non-operational examples**. Substitute authorize
 .\tests\Test-TailscaleDiagnostics.ps1 -Esp32IPAddress "198.51.100.20" -Count 3
 ```
 
-The default runs Windows ICMP and Tailscale ICMP without sending application traffic. Add `-IncludeDiscoDiagnostics` to include TSMP and default DISCO probes. Results do not prove the UDP/9999 listener will acknowledge a wake trigger. This script does not perform an application-level UDP ping, which would trigger WoL on the current firmware.
+The default runs Windows ICMP and Tailscale ICMP without sending application traffic. This diagnostic script currently exits with code `0` after collecting probes even when individual probes fail; interpret each command's output rather than the final exit code as an overall connectivity PASS. Add `-IncludeDiscoDiagnostics` to include TSMP and default DISCO probes. Results do not prove the UDP/9999 listener will acknowledge a wake trigger. This script does not perform an application-level UDP ping, which would trigger WoL on the current firmware.
 
 ## 3. Non-destructive service-readiness observation
 
@@ -101,16 +101,16 @@ This example **still sends a real UDP broadcast** and should only be used on a n
 
 The launcher supports an optional default Tailscale ping before sending. DERP-only gateways may not answer this probe despite a functional UDP listener. A failed default ping could prevent a working DERP-only gateway from receiving wake traffic.
 
-The follow-up code exposes `MAX_PING_ATTEMPTS` as a local setting:
+The current launcher exposes `MAX_PING_ATTEMPTS` as a local setting:
 
 | Value | Behaviour |
 | --- | --- |
-| `0` (default) | Skip **optional** default Tailscale ping, but still check Tailscale backend and peer map |
-| `1`–`5` | Run at most this many default pings; abort wake if none succeeds |
+| `0` | Skip **optional** default Tailscale ping, but still check Tailscale backend and peer map |
+| `1`–`5` (example default: `5`) | Run at most this many default pings; abort wake if none succeeds |
 
 A default DISCO ping failure is **not** equivalent to UDP wake failure. For this experimental firmware, `0` is the practical setup choice; it is not a bypass for authentication or access controls. Keep ESP32 in an authorized Tailnet with appropriate grants/ACLs.
 
-## 7. Regression verification matrix
+## 6. Regression verification matrix
 
 | Scenario | Expected behaviour |
 | --- | --- |
@@ -122,7 +122,7 @@ A default DISCO ping failure is **not** equivalent to UDP wake failure. For this
 | Remote: backend stopped | Error code 2, no wake sent |
 | Remote: ESP32 missing in peer map | Error code 2, no wake sent |
 | Remote: `MAX_PING_ATTEMPTS=0` | Ping skipped; UDP and TCP checks continue |
-| Remote: positive ping checks all fail | Error code 2 before UDP send |
+| Remote: positive ping checks all fail | Error code `3` before UDP send |
 | Remote: ACK lost, TCP eventually reachable | Successful TCP readiness, with warning about lost ACK |
 | Remote: TCP times out | Error code 1, no false host-ready claim |
 | ESP32 no access | Timeout, no successful ACK claim |
@@ -132,4 +132,4 @@ The matrix defines expected outcomes. Windows PowerShell runtime results and phy
 
 ## Security and scope
 
-The published Proxmox LAN sender remains unchanged. Do not forward TCP/8006 or ESP32 UDP/9999 to the public WAN. The ESP32's DERP TLS peer verification, authorization and endurance remain separate security/reliability blockers. See [Lab 06](06-esp32-remote-wol-gateway.md) and [the firmware validation report](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md).
+The Proxmox LAN sender and ESP32/Tailscale remote sender are maintained separately. Do not forward TCP/8006 or ESP32 UDP/9999 to the public WAN. The ESP32's DERP TLS peer verification, authorization and endurance remain separate security/reliability blockers. See [Lab 06](06-esp32-remote-wol-gateway.md) and [the firmware validation report](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md).

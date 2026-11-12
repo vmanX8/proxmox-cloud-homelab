@@ -1,0 +1,20 @@
+name: Windows PowerShell syntax
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  parse:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout sources
+        uses: actions/checkout@v4
+      - name: Parse PowerShell files (Windows PowerShell 5.1)
+        shell: powershell
+        run: |
+          .\tests\Test-PowerShellSyntax.ps1

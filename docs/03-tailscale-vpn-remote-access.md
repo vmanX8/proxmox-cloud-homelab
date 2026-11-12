@@ -162,7 +162,7 @@ See [Lab 06 — Troubleshooting and connectivity diagnostics](06-esp32-remote-wo
 - A dedicated policy/ACL and MFA hardening audit **has not been validated** by these acceptance tests.
 - The ESP32 adaptation has an **open DERP TLS certificate authentication blocker** and command authorization issues; it is not a production-secure remote management component. See [Lab 06](06-esp32-remote-wol-gateway.md).
 - No long-duration VPN/gateway reliability guarantee, guest network validation or production hardening is claimed.
-- The published [PowerShell LAN Magic Packet sender](../scripts/Wake-Proxmox.ps1) is a **different workflow** from the locally tested Tailscale-to-ESP32 wake launcher. The remote launcher is not claimed to be published in this repository.
+- The [LAN Magic Packet sender](../scripts/Wake-Proxmox.ps1) and [ESP32/Tailscale remote sender](../scripts/Wake-Proxmox-VPN.ps1) are separate published workflows. The **31.7-second** result above comes from a controlled measurement procedure, not from a validated timing run of the current interactive launcher. See [wake diagnostics](WAKE-TESTING.md).
 
 ## 7. Related labs
 

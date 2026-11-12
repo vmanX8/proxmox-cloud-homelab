@@ -32,7 +32,7 @@ The ESP32 remotely receives an **application UDP trigger** and builds a separate
 | `MAX_PING_ATTEMPTS` | `0` = skip optional Tailscale ping; `1`–`5` = run strict attempts |
 | `MAX_CHECK_ATTEMPTS`, `CHECK_INTERVAL_SECONDS` | TCP readiness polling count and interval |
 
-For a DERP-only embedded client that does not answer default DISCO probes, set `MAX_PING_ATTEMPTS=0` in the machine-specific configuration. This skips *only* the optional ping gate: `tailscale status --json`, backend state and expected peer validation remain required. The example file retains the user's supplied default of `5`; edit the private copy to `0` when this is appropriate for the tested network.
+For a DERP-only embedded client that does not answer default DISCO probes, set `MAX_PING_ATTEMPTS=0` in the machine-specific configuration. This skips *only* the optional ping gate: `tailscale status --json`, backend state and expected peer validation remain required. The example file uses `5` ping attempts. Set the machine-specific value to `0` for the tested DERP-only connectivity pattern when default DISCO probes do not succeed.
 
 ## Runtime behavior and verification limits
 
@@ -41,6 +41,18 @@ The remote sender uses ASCII `wake\n` (**5 bytes**, not a 4-byte `wake` payload)
 The local utility similarly distinguishes Magic Packet submission from TCP readiness. TCP/8006 becoming reachable is not evidence of complete hypervisor health, guest readiness or successful GUI authentication.
 
 **Do not use an application-level `ping` message on ESP32 UDP/9999:** the current firmware may treat any received UDP datagram as a wake request. Use ICMP diagnostics instead. No public UDP/9999 or TCP/8006 port-forward is recommended.
+
+### Exit codes
+
+| Code | Remote sender result |
+| --- | --- |
+| `0` | TCP management endpoint reachable |
+| `1` | TCP polling timed out |
+| `2` | VPN state or expected peer validation failed |
+| `3` | Configured Tailscale ping preflight failed |
+| `4` | All UDP send attempts failed |
+
+These codes distinguish failure stages; a successful TCP connection is not evidence that a GUI login has completed.
 
 ## Verification
 

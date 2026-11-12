@@ -89,10 +89,6 @@ A typical **local** command (example values only):
 
 The host TCP service becoming reachable is not proof of boot causality, authenticated login or full host health. Recorded wake, regression and remote acceptance results are documented in [Lab 05](docs/05-powershell-wol-automation.md) and [Lab 06](docs/06-esp32-remote-wol-gateway.md). Repeatable parser and network-check procedures are listed in the [wake testing reference](docs/WAKE-TESTING.md); recorded functional results remain scoped to their test conditions.
 
-## Wake Verification and Diagnostics
-
-[PowerShell test scripts and recorded measurements](docs/WAKE-TESTING.md) cover TCP service readiness, Tailscale diagnostics and ESP32 application UDP acknowledgments. Tests that transmit wake triggers require explicit opt-in.
-
 ## Learning Roadmap
 
 Planned areas of exploration include:
