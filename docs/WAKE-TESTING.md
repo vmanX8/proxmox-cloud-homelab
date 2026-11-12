@@ -62,9 +62,44 @@ This runs 10 separate UDP wake requests and listens for the ESP32 `ok` ACK, with
 
 **Important distinction:** a sender's UDP send count, an ESP32 ACK and a live Proxmox HTTPS service measure *three different stages*.
 
+## Recorded acceptance evidence (separate from these test harnesses)
+
+The table below summarizes **observations recorded in the lab documentation**, not results obtained by executing the new scripts in this directory.
+
+| Scenario | Recorded observation | What the test established |
+| --- | --- | --- |
+| LAN Magic Packet from shutdown | Toshiba powered on and Proxmox Web UI became accessible | Physical Wake-on-LAN worked on the tested NIC/driver |
+| LAN sender while target was online | Server detected as reachable, no additional wake sent; exit code `0` | Already-online branch |
+| Negative LAN sender test | Dummy MAC, unresponsive loopback TCP target on port `65534`, two polling attempts; exit code `1` | Bounded timeout/failure branch; not a proof of physical wake |
+| PowerShell exit-code regression | Success path returned `0`, timeout path returned `1` | Correct process-level result reporting |
+| Remote Tailscale access | Authenticated Proxmox dashboard from a remote laptop and mobile client | Application-level remote administration |
+| ESP32-assisted wake-to-TCP sample | First observed TCP `8006` success **31.7 seconds** after one UDP trigger | Trigger-to-first-observed TCP readiness; physical shutdown not witnessed for that particular timed run |
+| ESP32 application UDP ACK sampling | Earlier firmware **31/40**, experimental firmware **40/40**; experimental ACK RTT **498–893 ms**, mean approximately **603 ms** | Application responses over the tested transport; **not** 40 verified boots |
+| Gateway diagnostics | Windows ICMP **3/3**, Tailscale ICMP reply observed; TSMP/default DISCO probes timed out | Different probe protocols have different outcomes; do not use default ping alone as an availability gate |
+
+These results are described in [Lab 03](03-tailscale-vpn-remote-access.md), [Lab 05](05-powershell-wol-automation.md), [Lab 06](06-esp32-remote-wol-gateway.md) and [ESP32 firmware validation](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md).
+
+**Evidence status:** The original ad-hoc PowerShell scripts for every historical measurement were not archived. The checked-in `tests/` commands are newly reconstructed reproducibility utilities. They must not be described as the exact executables that generated the recorded numbers.
+
+### Additional negative-test example
+
+The recorded LAN negative test used a dummy MAC and a local loopback TCP endpoint expected to be closed. A sanitized equivalent, when running on an authorized LAN, is:
+
+```powershell
+.\scripts\Wake-Proxmox.ps1 `
+    -MacAddress "00:00:00:00:00:00" `
+    -BroadcastAddress "<YOUR_LAN_BROADCAST>" `
+    -TargetIPAddress "127.0.0.1" `
+    -TargetPort 65534 `
+    -MaxAttempts 2 `
+    -IntervalSeconds 1
+```
+
+This example **still sends a real UDP broadcast** and should only be used on a network you control. The expected negative result (exit code `1`) assumes no service is listening on loopback port `65534`. Do not treat a negative result as a test of the actual server's power state.
+
 ## 5. Launcher: strict ping vs configurable bypass
 
-The initial remote launcher candidate uses three strict default Tailscale pings before sending. A failed default ping could prevent a working DERP-only gateway from receiving wake traffic.
+The initial launcher revision used strict default Tailscale pings before sending. A failed default ping could prevent a working DERP-only gateway from receiving wake traffic.
 
 The follow-up code exposes `MAX_PING_ATTEMPTS` as a local setting:
 
@@ -75,7 +110,7 @@ The follow-up code exposes `MAX_PING_ATTEMPTS` as a local setting:
 
 A default DISCO ping failure is **not** equivalent to UDP wake failure. For this experimental firmware, `0` is the practical setup choice; it is not a bypass for authentication or access controls. Keep ESP32 in an authorized Tailnet with appropriate grants/ACLs.
 
-## 6. Windows acceptance matrix (not yet run on these PR versions)
+## 7. Windows acceptance matrix (not yet run on these PR versions)
 
 | Scenario | Expected behaviour |
 | --- | --- |
