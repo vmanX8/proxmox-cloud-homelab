@@ -114,9 +114,9 @@ A default DISCO ping failure is **not** equivalent to UDP wake failure. For this
 
 | Scenario | Expected behaviour |
 | --- | --- |
-| Setup wizard: valid inputs | Gitignored config created; no repo-relative paths hardcoded |
-| Setup wizard: invalid IP/MAC or port | Re-prompt without persisting invalid values |
-| Setup wizard: edit existing config | Current valid values offered as defaults |
+| Manual setup: example copied | `scripts/proxmox.local.cmd` exists with verified local values and remains Git-ignored |
+| Manual setup: bad or placeholder values | Launcher rejects missing or `REPLACE_ME` required values; additional input validation should be reviewed |
+| Repository moved to a different drive | The launcher still resolves scripts through `%~dp0` |
 | Local launcher: host already online | No unnecessary packet; TCP endpoint reported |
 | Local launcher: host shut down | LAN Magic Packet submitted and TCP polling eventually succeeds |
 | Remote: backend stopped | Error code 2, no wake sent |
