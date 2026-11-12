@@ -1,6 +1,6 @@
 # Windows Proxmox Launcher — LAN and Tailscale Remote Wake
 
-> **Source:** synchronized with the final local launcher files supplied by the project owner. Previous GitHub launcher code was a reconstruction with incompatible configuration and parameter names. **Re-run the checks below against this published revision on Windows before claiming this exact revision was tested.**
+> **Scope:** Windows PowerShell 5.1 launcher for LAN Magic Packets and ESP32-assisted remote wake. Configuration, validation procedures and known limitations are documented below.
 
 ## Two modes
 
@@ -32,9 +32,9 @@ The ESP32 remotely receives an **application UDP trigger** and builds a separate
 | `MAX_PING_ATTEMPTS` | `0` = skip optional Tailscale ping; `1`–`5` = run strict attempts |
 | `MAX_CHECK_ATTEMPTS`, `CHECK_INTERVAL_SECONDS` | TCP readiness polling count and interval |
 
-For a DERP-only embedded client that does not answer default DISCO probes, set `MAX_PING_ATTEMPTS=0` in **your local** configuration. This skips *only* the optional ping gate: `tailscale status --json`, backend state and expected peer validation remain required. The example file retains the user's supplied default of `5`; edit the private copy to `0` when this is appropriate for the tested network.
+For a DERP-only embedded client that does not answer default DISCO probes, set `MAX_PING_ATTEMPTS=0` in the machine-specific configuration. This skips *only* the optional ping gate: `tailscale status --json`, backend state and expected peer validation remain required. The example file retains the user's supplied default of `5`; edit the private copy to `0` when this is appropriate for the tested network.
 
-## Source behavior and verification boundaries
+## Runtime behavior and verification limits
 
 The remote sender uses ASCII `wake\n` (**5 bytes**, not a 4-byte `wake` payload). An `ok` reply from the expected IP and UDP port means an application acknowledgment was received; it does not prove physical boot. Missing ACK does not necessarily mean WoL failed: the client continues independently checking TCP readiness.
 
@@ -44,7 +44,7 @@ The local utility similarly distinguishes Magic Packet submission from TCP readi
 
 ## Verification
 
-On the actual Windows system:
+Run the parser check with Windows PowerShell 5.1:
 
 ```powershell
 $files = @('.\scripts\Wake-Proxmox.ps1', '.\scripts\Wake-Proxmox-VPN.ps1')
@@ -63,11 +63,11 @@ git check-ignore -v scripts/proxmox.local.cmd
 git status --short
 ```
 
-The historical recorded tests cover functional LAN wake, ESP32 remote wake, TCP service readiness and ping/ACK failure scenarios, but this GitHub revision has **not been executed on Windows by this documentation change**. See [Lab 05](../docs/05-powershell-wol-automation.md) and [Lab 06](../docs/06-esp32-remote-wol-gateway.md).
+Recorded LAN and remote wake results are documented in [Lab 05](../docs/05-powershell-wol-automation.md), [Lab 06](../docs/06-esp32-remote-wol-gateway.md) and the [wake test reference](../docs/WAKE-TESTING.md). Parser and runtime checks are distinct from the previously recorded hardware measurements.
 
 ### Security and limitations
 
 - Do not commit `proxmox.local.cmd`, Tailscale credentials or network identifiers. `.gitignore` does not remove already-tracked files or old Git history.
 - Review downloaded scripts before execution. The launcher does not invoke `-ExecutionPolicy Bypass`; respect local and organizational execution policy.
 - The ESP32 firmware still has DERP TLS verification and wake-command authorization concerns, as well as outstanding reliability tests. It is not production-ready.
-- The separately proposed interactive setup wizard from the earlier reconstructed PR was removed: it used **different configuration variable names** and was not part of the supplied final launcher. Setup is currently the documented copy-and-edit workflow.
+- Configuration is maintained by copying the example to a Git-ignored `proxmox.local.cmd` and editing the local values. No automated setup wizard is required.
