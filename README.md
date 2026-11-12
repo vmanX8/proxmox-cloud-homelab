@@ -162,6 +162,10 @@ echo Script exit code: %ERRORLEVEL%
 pause
 ```
 
+## Reproducible Wake Diagnostics
+
+[Wake-to-TCP, UDP ACK and Tailscale diagnostic tests](docs/WAKE-TESTING.md) distinguish historical observations from newly reconstructed test utilities. The wake/ACK tests require explicit opt-in before sending real traffic.
+
 ## Learning Roadmap
 
 Planned areas of exploration include:
