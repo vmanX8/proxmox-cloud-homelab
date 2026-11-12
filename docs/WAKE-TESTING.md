@@ -6,7 +6,7 @@
 
 | Script | Side effects | Purpose |
 | --- | --- | --- |
-| [`Test-PowerShellSyntax.ps1`](../tests/Test-PowerShellSyntax.ps1) | Read-only | Parse the checked-in PowerShell scripts using the PowerShell 7 AST parser |
+| [`Test-PowerShellSyntax.ps1`](../tests/Test-PowerShellSyntax.ps1) | Read-only | Parse the checked-in PowerShell scripts with the AST parser |
 | [`Test-TailscaleDiagnostics.ps1`](../tests/Test-TailscaleDiagnostics.ps1) | Read-only | ICMP reachability and optional TSMP/DISCO comparison without wake datagrams |
 | [`Test-WakeToTcp.ps1`](../tests/Test-WakeToTcp.ps1) | Read-only by default | Time from test start to first observed TCP/8006 readiness; optional **one real UDP wake trigger** with `-SendWake` |
 | [`Test-Esp32UdpAck.ps1`](../tests/Test-Esp32UdpAck.ps1) | **Sends real wake triggers** | Sample UDP `ok` ACK delivery/RTT/source-port correlation; requires `-AllowWakePackets` |
@@ -14,10 +14,10 @@
 
 All addresses shown below are **non-operational examples**. Substitute authorized Tailnet peers; do not commit real configuration.
 
-## 1. PowerShell 7 syntax validation
+## 1. Optional PowerShell syntax validation
 
 ```powershell
-pwsh -NoProfile -File .\tests\Test-PowerShellSyntax.ps1
+.\tests\Test-PowerShellSyntax.ps1
 ```
 
 **Expected:** every script reports PASS, exit code `0`. A failure means parsing should be fixed before runtime or network tests. This is a static syntax test only, not proof of correctness.

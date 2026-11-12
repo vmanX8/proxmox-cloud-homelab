@@ -1,4 +1,4 @@
-# Local Wake-on-LAN Magic Packet sender for Windows PowerShell 5.1
+# Local Wake-on-LAN Magic Packet sender for Windows
 # Maintains the original flow: check TCP -> send Magic Packet -> poll TCP -> open GUI.
 [CmdletBinding()]
 param(
