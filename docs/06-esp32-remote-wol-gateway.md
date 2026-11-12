@@ -80,7 +80,7 @@ During external use, ordinary IP-layer and Tailscale-specific probes behaved dif
 
 **Do not use a failed default Tailscale ping as the sole signal that this gateway is offline.** The probe does not test the same application UDP listener. The field results demonstrate functional wake traffic even when default Tailscale ping times out.
 
-A further launcher troubleshooting issue was a ping preflight that blocked otherwise usable remote-wake traffic. A configurable diagnostic bypass and bounded UDP ACK retries were tested locally. The public [LAN-direct PowerShell sender](../scripts/Wake-Proxmox.ps1) remains a separate utility; **the later remote launcher is not included in the published Proxmox scripts**. See [Lab 05](05-powershell-wol-automation.md) for the automation boundary.
+A further launcher troubleshooting issue was a ping preflight that blocked otherwise usable remote-wake traffic. A configurable diagnostic bypass and bounded UDP ACK retries were tested locally. The [LAN-direct PowerShell sender](../scripts/Wake-Proxmox.ps1) and the [ESP32/Tailscale remote wake sender](../scripts/Wake-Proxmox-VPN.ps1) are separate workflows. The local launcher source is now available in the repository alongside its [configuration guide](../scripts/README-launcher.md); public-source runtime validation and firmware security review are separate from the earlier reported field tests. See [Lab 05](05-powershell-wol-automation.md).
 
 **Non-destructive diagnostics:** ICMP is available for connectivity checks. **Do not send application UDP `ping` to port `9999` on the current firmware**: its wake listener accepts any received UDP payload as a wake request, so `ping` can trigger an actual WoL broadcast.
 

@@ -1,137 +1,96 @@
-
-# Wake-on-LAN Magic Packet sender for Windows PowerShell
-
+# Local Wake-on-LAN Magic Packet sender for Windows PowerShell 5.1
+# Maintains the original flow: check TCP -> send Magic Packet -> poll TCP -> open GUI.
+[CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
     [string]$MacAddress,
-
     [Parameter(Mandatory = $true)]
     [string]$BroadcastAddress,
-
+    [ValidateRange(1, 65535)]
     [int]$Port = 9,
-
-    [string]$SourceIPAddress,
-
+    [string]$SourceIPAddress = '',
+    [Parameter(Mandatory = $true)]
     [string]$TargetIPAddress,
-
+    [ValidateRange(1, 65535)]
     [int]$TargetPort = 8006,
-
     [switch]$OpenBrowser,
-
     [ValidateRange(1, 120)]
     [int]$MaxAttempts = 18,
-
     [ValidateRange(1, 60)]
     [int]$IntervalSeconds = 5
 )
 
-# Check whether the target is already reachable
-if ($TargetIPAddress) {
+$ErrorActionPreference = 'Stop'
+$webUrl = "https://${TargetIPAddress}:$TargetPort"
 
-    Write-Host "Checking server availability..."
-
-    $isOnline = Test-NetConnection `
-        -ComputerName $TargetIPAddress `
-        -Port $TargetPort `
-        -InformationLevel Quiet `
-        -WarningAction SilentlyContinue
-
-    if ($isOnline) {
-        Write-Host "[OK] Server is already reachable on TCP port $TargetPort."
-        $url = "https://${TargetIPAddress}:$TargetPort"
-        Write-Host "Open Proxmox Web GUI: $url"
-        if ($OpenBrowser) {
-            Start-Process $url
-        }
-        exit 0
+function Test-TcpReady {
+    param([string]$Address, [int]$Port, [int]$TimeoutMs = 2500)
+    $client = New-Object System.Net.Sockets.TcpClient
+    $result = $null
+    try {
+        $result = $client.BeginConnect($Address, $Port, $null, $null)
+        if (-not $result.AsyncWaitHandle.WaitOne($TimeoutMs)) { return $false }
+        $client.EndConnect($result)
+        return $true
     }
-
-    Write-Host "[INFO] Server is not reachable. Sending Wake-on-LAN packet..."
+    catch { return $false }
+    finally {
+        if ($null -ne $result) { $result.AsyncWaitHandle.Close() }
+        $client.Close()
+    }
 }
 
-# Convert the MAC address into 6 bytes
-$macBytes = [byte[]](
-    $MacAddress.Replace("-", ":").Split(":") |
-    ForEach-Object {
-        [Convert]::ToByte($_, 16)
-    }
-)
-
-if ($macBytes.Length -ne 6) {
-    throw "A MAC address must contain exactly 6 bytes."
+function Open-ProxmoxBrowser {
+    if ($OpenBrowser) { Start-Process $webUrl }
+    Write-Host "Proxmox Web UI: $webUrl"
 }
 
-# Build the 102-byte Magic Packet
-$packet = [byte[]](
-    (@([byte]0xFF) * 6) + ($macBytes * 16)
-)
-
-$udp = $null
+Write-Host '[INFO] Checking LAN Proxmox availability...'
+if (Test-TcpReady -Address $TargetIPAddress -Port $TargetPort) {
+    Write-Host '[OK] Proxmox is already reachable. No Magic Packet needed.'
+    Open-ProxmoxBrowser
+    exit 0
+}
 
 try {
-    # Optionally bind to a specific local network interface
-    if ($SourceIPAddress) {
-        $localEndpoint = [System.Net.IPEndPoint]::new(
-            [System.Net.IPAddress]::Parse($SourceIPAddress),
-            0
-        )
-        $udp = [System.Net.Sockets.UdpClient]::new($localEndpoint)
-    }
-    else {
-        $udp = [System.Net.Sockets.UdpClient]::new()
-    }
+    $parts = $MacAddress.Replace('-', ':').Split(':')
+    if ($parts.Length -ne 6) { throw 'MAC must have exactly 6 hexadecimal octets.' }
+    $macBytes = [byte[]]($parts | ForEach-Object { [Convert]::ToByte($_, 16) })
+    $packet = [byte[]]((@([byte]0xFF) * 6) + ($macBytes * 16))
+    if ($packet.Length -ne 102) { throw 'Magic Packet length is not 102 bytes.' }
 
-    $udp.EnableBroadcast = $true
-
-    $sent = $udp.Send(
-        $packet,
-        $packet.Length,
-        $BroadcastAddress,
-        $Port
-    )
-
-    Write-Host "Magic Packet sent: $sent bytes"
-    Write-Host "Target MAC: $MacAddress"
-    Write-Host "Destination: ${BroadcastAddress}:$Port"
-    Write-Host "Note: Sending does not confirm that the target powered on."
-}
-finally {
-    if ($null -ne $udp) {
-        $udp.Close()
-    }
-}
-
-
-# Wait for the target service after sending the Magic Packet
-if ($TargetIPAddress) {
-
-    Write-Host "[INFO] Waiting for server availability..."
-
-    for ($attempt = 1; $attempt -le $maxAttempts; $attempt++) {
-
-        Start-Sleep -Seconds $intervalSeconds
-
-        $isOnline = Test-NetConnection `
-            -ComputerName $TargetIPAddress `
-            -Port $TargetPort `
-            -InformationLevel Quiet `
-            -WarningAction SilentlyContinue
-
-        if ($isOnline) {
-            Write-Host "[SUCCESS] Server is reachable!"
-            $url = "https://${TargetIPAddress}:$TargetPort"
-            if ($OpenBrowser) {
-                Start-Process $url
-            }
-            Write-Host "Open Proxmox Web GUI: $url"
-            exit 0
+    $udp = $null
+    try {
+        if ($SourceIPAddress) {
+            $endpoint = [System.Net.IPEndPoint]::new([System.Net.IPAddress]::Parse($SourceIPAddress), 0)
+            $udp = [System.Net.Sockets.UdpClient]::new($endpoint)
         }
-
-        Write-Host "[WAIT] Attempt $attempt of $maxAttempts..."
+        else {
+            $udp = New-Object System.Net.Sockets.UdpClient
+        }
+        $udp.EnableBroadcast = $true
+        $sent = $udp.Send($packet, $packet.Length, $BroadcastAddress, $Port)
+        if ($sent -ne 102) { throw "Unexpected UDP send byte count: $sent" }
+        Write-Host "[INFO] Sent $sent bytes to ${BroadcastAddress}:$Port (not proof of wake)."
     }
-
-    Write-Warning "Server did not become reachable after $maxAttempts checks."
-    exit 1
+    finally {
+        if ($null -ne $udp) { $udp.Close() }
+    }
 }
-# Successful completion when no target availability check was requested
-exit 0
+catch {
+    Write-Host "[ERROR] Local Magic Packet failed: $($_.Exception.Message)"
+    exit 4
+}
+
+Write-Host "[INFO] Waiting for Proxmox: max $MaxAttempts checks, every $IntervalSeconds seconds."
+for ($attempt = 1; $attempt -le $MaxAttempts; $attempt++) {
+    Start-Sleep -Seconds $IntervalSeconds
+    if (Test-TcpReady -Address $TargetIPAddress -Port $TargetPort) {
+        Write-Host '[SUCCESS] Proxmox TCP port is reachable.'
+        Open-ProxmoxBrowser
+        exit 0
+    }
+    Write-Host "[WAIT] Check $attempt/$MaxAttempts"
+}
+Write-Host '[ERROR] Timed out waiting for the Proxmox Web UI.'
+exit 1
