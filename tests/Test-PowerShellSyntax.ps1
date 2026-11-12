@@ -1,4 +1,4 @@
-# Read-only PowerShell AST parsing check. CI runs this under PowerShell 7.
+# Optional read-only PowerShell AST parsing check.
 [CmdletBinding()]
 param()
 $ErrorActionPreference='Stop'

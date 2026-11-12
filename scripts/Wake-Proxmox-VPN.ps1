@@ -1,5 +1,5 @@
 # Tailscale VPN -> ESP32 UDP 'wake' -> Proxmox Web UI.
-# PowerShell 5.1 compatible. The first successful DERP or direct pong is accepted.
+# Accepts a successful Tailscale reply over DERP or a direct path.
 [CmdletBinding()]
 param(
     [Parameter(Mandatory = $true)]
@@ -119,7 +119,7 @@ if (-not $ready) {
 }
 
 # UDP wake with application-level ACK and bounded retries.
-# PowerShell 5.1 compatible.
+# Application-level UDP wake with bounded acknowledgment retries.
 
 $payload = [System.Text.Encoding]::ASCII.GetBytes("wake`n")
 $udp = [System.Net.Sockets.UdpClient]::new(0)

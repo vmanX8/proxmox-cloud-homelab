@@ -1,6 +1,6 @@
 # Windows Proxmox Launcher — LAN and Tailscale Remote Wake
 
-> **Scope:** Windows launcher for LAN Magic Packets and ESP32-assisted remote wake, with PowerShell 7 used for routine script validation. Configuration, validation procedures and known limitations are documented below.
+> **Scope:** Windows launcher for LAN Magic Packets and ESP32-assisted remote wake. Configuration, validation procedures and known limitations are documented below.
 
 ## Two modes
 
@@ -56,15 +56,15 @@ These codes distinguish failure stages; a successful TCP connection is not evide
 
 ## Verification
 
-Run the syntax check using PowerShell 7 (`pwsh`) from the repository root:
+An optional syntax check can be run from a PowerShell session in the repository root:
 
 ```powershell
-pwsh -NoProfile -File .\tests\Test-PowerShellSyntax.ps1
+.\tests\Test-PowerShellSyntax.ps1
 git check-ignore -v scripts/proxmox.local.cmd
 git status --short
 ```
 
-Recorded LAN and remote wake results are documented in [Lab 05](../docs/05-powershell-wol-automation.md), [Lab 06](../docs/06-esp32-remote-wol-gateway.md) and the [wake test reference](../docs/WAKE-TESTING.md). The PowerShell 7 syntax check does not replace launcher runtime tests or previously recorded hardware measurements.
+Recorded LAN and remote wake results are documented in [Lab 05](../docs/05-powershell-wol-automation.md), [Lab 06](../docs/06-esp32-remote-wol-gateway.md) and the [wake test reference](../docs/WAKE-TESTING.md). A syntax check does not replace launcher runtime tests or recorded hardware measurements.
 
 ### Security and limitations
 

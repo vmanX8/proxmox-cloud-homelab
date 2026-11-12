@@ -68,6 +68,8 @@ Each lab documents the technical decisions, implementation steps, challenges enc
 
 ## Windows Wake-on-LAN Utilities
 
+**PowerShell compatibility:** The scripts use PowerShell on Windows. Windows PowerShell 5.1 and PowerShell 7 are possible execution environments, but no specific version is enforced by this repository; compatibility should be verified with the selected environment.
+
 The repository provides two separate workflows:
 
 - **Local LAN WoL:** [`scripts/Wake-Proxmox.ps1`](scripts/Wake-Proxmox.ps1) sends a 102-byte Ethernet Magic Packet via UDP broadcast.
