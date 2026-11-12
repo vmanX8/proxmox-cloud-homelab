@@ -1,4 +1,4 @@
-name: Windows PowerShell syntax
+name: PowerShell 7 syntax
 
 on:
   pull_request:
@@ -14,7 +14,7 @@ jobs:
     steps:
       - name: Checkout sources
         uses: actions/checkout@v4
-      - name: Parse PowerShell files (Windows PowerShell 5.1)
-        shell: powershell
+      - name: Parse PowerShell files (PowerShell 7)
+        shell: pwsh
         run: |
           .\tests\Test-PowerShellSyntax.ps1
