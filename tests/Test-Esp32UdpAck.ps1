@@ -37,9 +37,10 @@ try {
         try {
             $udp.Connect($Esp32IPAddress,$UdpPort)
             $udp.Client.ReceiveTimeout=$AckTimeoutMs
-            $srcPort=([System.Net.IPEndPoint]$udp.Client.LocalEndPoint).Port
             $payload=[System.Text.Encoding]::ASCII.GetBytes(('wake'+[char]10))
             [void]$udp.Send($payload,$payload.Length)
+            # A UDP socket may acquire its ephemeral local port only on first send.
+            $srcPort=([System.Net.IPEndPoint]$udp.Client.LocalEndPoint).Port
             $remote=[System.Net.IPEndPoint]::new([System.Net.IPAddress]::Any,0)
             try {
                 $reply=$udp.Receive([ref]$remote)
