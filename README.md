@@ -162,6 +162,15 @@ echo Script exit code: %ERRORLEVEL%
 pause
 ```
 
+## Windows Launcher and Reproducible Tests
+
+The repository includes a proposed interactive Windows launcher with local and ESP32/Tailscale remote modes, a validated-settings wizard, and a configurable ping preflight. The launcher sources were reconstructed from test notes and still require Windows runtime acceptance.
+
+- [Windows launcher and setup guide](scripts/README-launcher.md)
+- [Network verification tests and observed results](docs/WAKE-TESTING.md)
+
+Real per-machine `proxmox.local.cmd` settings are gitignored; the repository includes only [example values](scripts/proxmox.local.example.cmd).
+
 ## Learning Roadmap
 
 Planned areas of exploration include:

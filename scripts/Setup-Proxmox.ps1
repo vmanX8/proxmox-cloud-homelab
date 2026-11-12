@@ -18,6 +18,9 @@ function Test-Value {
     if ($Name -in @('WAKE_UDP_PORT','TARGET_TCP_PORT')) {
         return ($Value -match '^\d{1,5}$' -and [int]$Value -ge 1 -and [int]$Value -le 65535)
     }
+    if ($Name -eq 'MAX_PING_ATTEMPTS') {
+        return ($Value -match '^\d{1,2}$' -and [int]$Value -ge 0 -and [int]$Value -le 20)
+    }
     if ($Name -eq 'TCP_ATTEMPTS') {
         return ($Value -match '^\d{1,3}$' -and [int]$Value -ge 1 -and [int]$Value -le 120)
     }
@@ -45,6 +48,7 @@ $fields = @(
     @{Name='PROXMOX_TS_IP'; Prompt='Proxmox Tailnet IPv4'; Default=''},
     @{Name='WAKE_UDP_PORT'; Prompt='ESP32 UDP port'; Default='9999'},
     @{Name='TARGET_TCP_PORT'; Prompt='Proxmox TCP port'; Default='8006'},
+    @{Name='MAX_PING_ATTEMPTS'; Prompt='Optional Tailscale ping checks (0=bypass)'; Default='0'},
     @{Name='TCP_ATTEMPTS'; Prompt='TCP check attempts'; Default='18'},
     @{Name='TCP_INTERVAL'; Prompt='TCP check interval in seconds'; Default='5'}
 )

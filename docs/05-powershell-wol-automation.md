@@ -29,7 +29,9 @@ A manually typed Wake-on-LAN Magic Packet command was inconvenient. The goal was
 | Optional browser open | Management UI opened in the browser |
 | Local `.cmd` launcher | Tested twice from complete shutdown; launched PowerShell and reached the Web UI |
 
-The batch launcher is kept **local only**: it contains Windows filesystem paths and machine-specific parameters. The repository provides the reusable script rather than a personal launcher.
+The original LAN launcher was tested locally from complete shutdown. The repository also contains a **separate proposed Windows launcher** with a local-configuration wizard and an ESP32/Tailscale remote client. See [Windows launcher documentation](../scripts/README-launcher.md). These newly published sources were **reconstructed from observed workflows**; they have not been demonstrated to be byte-for-byte copies of the local tested launcher and require Windows PowerShell 5.1 runtime acceptance.
+
+Local machine settings remain outside Git in `scripts/proxmox.local.cmd` (gitignored), with only a sanitized example published.
 
 ## What the checks prove
 
@@ -41,6 +43,6 @@ A successful TCP connection to the configured service port confirms reachability
 - Automated tests for exact Magic Packet bytes and success/failure branches.
 - Less duplicated reachability logic if the script grows.
 
-These are **improvement ideas**, not failed lab acceptance criteria. Remote wake over Tailscale is a different integration addressed in [Lab 06](06-esp32-remote-wol-gateway.md).
+These are **improvement ideas**, not failed lab acceptance criteria. Remote wake over Tailscale is a different integration addressed in [Lab 06](06-esp32-remote-wol-gateway.md). For repeatable diagnostics, see [Windows Wake Testing](WAKE-TESTING.md).
 
 [Lab 04 — NIC driver and WoL support](04-wake-on-lan-alx-dkms.md) · [Architecture overview](ARCHITECTURE.md)

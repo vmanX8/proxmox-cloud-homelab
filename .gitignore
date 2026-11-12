@@ -1,5 +1,6 @@
 # Machine-specific launcher settings
 scripts/proxmox.local.cmd
+scripts/proxmox.local.cmd.tmp
 **/proxmox.local.cmd
 # Private runtime artifacts
 .env
