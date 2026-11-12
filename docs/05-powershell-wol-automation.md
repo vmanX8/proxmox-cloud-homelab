@@ -35,6 +35,8 @@ The batch launcher is kept **local only**: it contains Windows filesystem paths 
 
 A successful TCP connection to the configured service port confirms reachability **of that port at the time of testing**. It does not independently prove boot causality or full application health. When no target endpoint is provided, exit code `0` confirms that packet sending completed, not that the server woke.
 
+For recorded acceptance observations and reproducible diagnostics, see [Wake Testing](WAKE-TESTING.md). The new test scripts are reconstructed and have not yet been run on Windows from this repository.
+
 ## Areas for possible improvement
 
 - Parameter input validation for MAC, IP and ports.
