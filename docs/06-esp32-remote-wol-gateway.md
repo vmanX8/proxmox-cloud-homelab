@@ -99,6 +99,8 @@ A further launcher troubleshooting issue was a ping preflight that blocked other
 
 This is an experimental homelab integration, **not a production-secure or high-availability service**.
 
+For separate UDP ACK, ping-mode and trigger-to-TCP diagnostic procedures, see [Wake Testing](WAKE-TESTING.md). These are reconstructed scripts; recorded historical success rates must not be attributed to new test runs.
+
 ## 6. Related documentation
 
 - [Lab 03 — Tailscale VPN & Remote Access](03-tailscale-vpn-remote-access.md)
