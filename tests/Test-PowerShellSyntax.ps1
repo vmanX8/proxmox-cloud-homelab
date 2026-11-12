@@ -6,7 +6,6 @@ $root=Split-Path -Parent $PSScriptRoot
 $paths=@(
   'scripts/Wake-Proxmox.ps1',
   'scripts/Wake-Proxmox-VPN.ps1',
-  'scripts/Setup-Proxmox.ps1',
   'tests/Test-WakeToTcp.ps1',
   'tests/Test-Esp32UdpAck.ps1',
   'tests/Test-TailscaleDiagnostics.ps1',
