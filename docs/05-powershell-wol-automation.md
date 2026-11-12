@@ -29,7 +29,7 @@ A manually typed Wake-on-LAN Magic Packet command was inconvenient. The goal was
 | Optional browser open | Management UI opened in the browser |
 | Local `.cmd` launcher | Tested twice from complete shutdown; launched PowerShell and reached the Web UI |
 
-The public repository now includes the [Windows LAN/Remote launcher](../scripts/Start-Proxmox.cmd), the [remote ESP32/Tailscale sender](../scripts/Wake-Proxmox-VPN.ps1) and a [sanitized configuration example](../scripts/proxmox.local.example.cmd). Their source was synchronized with the final local files provided for review; the exact published revision still requires Windows runtime verification. The real `scripts/proxmox.local.cmd` remains local and Git-ignored. See the [launcher usage guide](../scripts/README-launcher.md).
+The [Windows LAN/Remote launcher](../scripts/Start-Proxmox.cmd), [ESP32/Tailscale sender](../scripts/Wake-Proxmox-VPN.ps1) and [configuration example](../scripts/proxmox.local.example.cmd) are maintained in `scripts/`. Machine-specific `scripts/proxmox.local.cmd` is excluded from Git. Setup, parameter behavior and regression checks are described in the [launcher guide](../scripts/README-launcher.md) and [wake testing reference](WAKE-TESTING.md).
 
 ## What the checks prove
 
