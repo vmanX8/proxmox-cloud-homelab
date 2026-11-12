@@ -99,14 +99,14 @@ This example **still sends a real UDP broadcast** and should only be used on a n
 
 ## 5. Launcher: strict ping vs configurable bypass
 
-The initial launcher revision used strict default Tailscale pings before sending. A failed default ping could prevent a working DERP-only gateway from receiving wake traffic.
+The earlier launcher revision used strict default Tailscale pings before sending; the supplied final source supports an optional bypass. A failed default ping could prevent a working DERP-only gateway from receiving wake traffic.
 
 The follow-up code exposes `MAX_PING_ATTEMPTS` as a local setting:
 
 | Value | Behaviour |
 | --- | --- |
 | `0` (default) | Skip **optional** default Tailscale ping, but still check Tailscale backend and peer map |
-| `1`–`20` | Run at most this many default pings; abort wake if none succeeds |
+| `1`–`5` | Run at most this many default pings; abort wake if none succeeds |
 
 A default DISCO ping failure is **not** equivalent to UDP wake failure. For this experimental firmware, `0` is the practical setup choice; it is not a bypass for authentication or access controls. Keep ESP32 in an authorized Tailnet with appropriate grants/ACLs.
 

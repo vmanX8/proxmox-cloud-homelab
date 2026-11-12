@@ -29,13 +29,13 @@ A manually typed Wake-on-LAN Magic Packet command was inconvenient. The goal was
 | Optional browser open | Management UI opened in the browser |
 | Local `.cmd` launcher | Tested twice from complete shutdown; launched PowerShell and reached the Web UI |
 
-The batch launcher is kept **local only**: it contains Windows filesystem paths and machine-specific parameters. The repository provides the reusable script rather than a personal launcher.
+The public repository now includes the [Windows LAN/Remote launcher](../scripts/Start-Proxmox.cmd), the [remote ESP32/Tailscale sender](../scripts/Wake-Proxmox-VPN.ps1) and a [sanitized configuration example](../scripts/proxmox.local.example.cmd). Their source was synchronized with the final local files provided for review; the exact published revision still requires Windows runtime verification. The real `scripts/proxmox.local.cmd` remains local and Git-ignored. See the [launcher usage guide](../scripts/README-launcher.md).
 
 ## What the checks prove
 
 A successful TCP connection to the configured service port confirms reachability **of that port at the time of testing**. It does not independently prove boot causality or full application health. When no target endpoint is provided, exit code `0` confirms that packet sending completed, not that the server woke.
 
-For recorded acceptance observations and reproducible diagnostics, see [Wake Testing](WAKE-TESTING.md). The new test scripts are reconstructed and have not yet been run on Windows from this repository.
+For historical acceptance evidence and reproducibility tools, see [Wake Testing](WAKE-TESTING.md). The test harnesses are reconstructions rather than the exact original ad-hoc scripts and require new Windows validation.
 
 ## Areas for possible improvement
 

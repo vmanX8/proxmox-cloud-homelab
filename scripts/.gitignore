@@ -1,0 +1,2 @@
+# Local machine-specific configuration must never be committed.
+/proxmox.local.cmd
