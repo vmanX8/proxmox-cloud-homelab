@@ -1,3 +1,7 @@
+# Local AI working files
+.agent-local/
+AGENTS.md
+
 # Machine-specific launcher settings
 scripts/proxmox.local.cmd
 **/proxmox.local.cmd
