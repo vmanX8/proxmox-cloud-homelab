@@ -1,6 +1,6 @@
 # Windows Proxmox Launcher — LAN and Tailscale Remote Wake
 
-> **Scope:** Windows PowerShell 5.1 launcher for LAN Magic Packets and ESP32-assisted remote wake. Configuration, validation procedures and known limitations are documented below.
+> **Scope:** Windows launcher for LAN Magic Packets and ESP32-assisted remote wake, with PowerShell 7 used for routine script validation. Configuration, validation procedures and known limitations are documented below.
 
 ## Two modes
 
@@ -32,7 +32,7 @@ The ESP32 remotely receives an **application UDP trigger** and builds a separate
 | `MAX_PING_ATTEMPTS` | `0` = skip optional Tailscale ping; `1`–`5` = run strict attempts |
 | `MAX_CHECK_ATTEMPTS`, `CHECK_INTERVAL_SECONDS` | TCP readiness polling count and interval |
 
-For a DERP-only embedded client that does not answer default DISCO probes, set `MAX_PING_ATTEMPTS=0` in the machine-specific configuration. This skips *only* the optional ping gate: `tailscale status --json`, backend state and expected peer validation remain required. The example file retains the user's supplied default of `5`; edit the private copy to `0` when this is appropriate for the tested network.
+For a DERP-only embedded client that does not answer default DISCO probes, set `MAX_PING_ATTEMPTS=0` in the machine-specific configuration. This skips *only* the optional ping gate: `tailscale status --json`, backend state and expected peer validation remain required. The example file uses `5` ping attempts. Set the machine-specific value to `0` for the tested DERP-only connectivity pattern when default DISCO probes do not succeed.
 
 ## Runtime behavior and verification limits
 
@@ -42,28 +42,29 @@ The local utility similarly distinguishes Magic Packet submission from TCP readi
 
 **Do not use an application-level `ping` message on ESP32 UDP/9999:** the current firmware may treat any received UDP datagram as a wake request. Use ICMP diagnostics instead. No public UDP/9999 or TCP/8006 port-forward is recommended.
 
+### Exit codes
+
+| Code | Remote sender result |
+| --- | --- |
+| `0` | TCP management endpoint reachable |
+| `1` | TCP polling timed out |
+| `2` | VPN state or expected peer validation failed |
+| `3` | Configured Tailscale ping preflight failed |
+| `4` | All UDP send attempts failed |
+
+These codes distinguish failure stages; a successful TCP connection is not evidence that a GUI login has completed.
+
 ## Verification
 
-Run the parser check with Windows PowerShell 5.1:
+Run the syntax check using PowerShell 7 (`pwsh`) from the repository root:
 
 ```powershell
-$files = @('.\scripts\Wake-Proxmox.ps1', '.\scripts\Wake-Proxmox-VPN.ps1')
-foreach ($file in $files) {
-    $tokens = $null; $parseErrors = $null
-    [System.Management.Automation.Language.Parser]::ParseFile(
-        (Resolve-Path $file), [ref]$tokens, [ref]$parseErrors
-    ) | Out-Null
-    if ($parseErrors -and $parseErrors.Count -gt 0) {
-        $parseErrors | Format-List
-        throw "Parse failed: $file"
-    }
-    Write-Host "Parse OK: $file"
-}
+pwsh -NoProfile -File .\tests\Test-PowerShellSyntax.ps1
 git check-ignore -v scripts/proxmox.local.cmd
 git status --short
 ```
 
-Recorded LAN and remote wake results are documented in [Lab 05](../docs/05-powershell-wol-automation.md), [Lab 06](../docs/06-esp32-remote-wol-gateway.md) and the [wake test reference](../docs/WAKE-TESTING.md). Parser and runtime checks are distinct from the previously recorded hardware measurements.
+Recorded LAN and remote wake results are documented in [Lab 05](../docs/05-powershell-wol-automation.md), [Lab 06](../docs/06-esp32-remote-wol-gateway.md) and the [wake test reference](../docs/WAKE-TESTING.md). The PowerShell 7 syntax check does not replace launcher runtime tests or previously recorded hardware measurements.
 
 ### Security and limitations
 
