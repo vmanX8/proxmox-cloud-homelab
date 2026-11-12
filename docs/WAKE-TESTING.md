@@ -79,7 +79,7 @@ The table below summarizes **observations recorded in the lab documentation**, n
 
 These results are described in [Lab 03](03-tailscale-vpn-remote-access.md), [Lab 05](05-powershell-wol-automation.md), [Lab 06](06-esp32-remote-wol-gateway.md) and [ESP32 firmware validation](https://github.com/vmanX8/ESP32-WoL/blob/main/docs/VALIDATION_AND_LIMITATIONS.md).
 
-**Evidence status:** The original ad-hoc commands used for every recorded measurement were not retained. The maintained `tests/` scripts implement repeatable procedures; earlier measurements are attributed to their original test conditions.
+**Evidence status:** The recorded measurements are scoped to their documented test sessions. The scripts in `tests/` provide repeatable procedures for subsequent verification.
 
 ### Additional negative-test example
 
