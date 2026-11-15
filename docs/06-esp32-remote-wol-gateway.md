@@ -34,7 +34,7 @@ The gateway is an adaptation of [medinajaime/esp32-wakeonlan](https://github.com
 
 The application can use DERP-relayed WireGuard traffic to carry the trigger when a direct peer path is unavailable. Direct STUN/DISCO negotiation is not part of the **tested DERP-only application configuration** of the newer experimental firmware.
 
-**Version boundary:** The public ESP32 repository's default branch documents the earlier end-to-end validated firmware. Later reliability fixes and their test evidence are available in a [separate experimental branch comparison](https://github.com/vmanX8/ESP32-WoL/compare/main...fix/hl06-esp32-derp-reliability). This document does not claim that unmerged experimental code is already released on `main`.
+**Version boundary:** The reliability changes previously documented in the experimental branch were merged into the `main` branch of the personal fork `vmanX8/ESP32-WoL` through [PR #8](https://github.com/vmanX8/ESP32-WoL/pull/8) on 14 November 2026, at commit [`5e4b711`](https://github.com/vmanX8/ESP32-WoL/commit/5e4b71111d9bc5388f730d1670aa569eba720dc1). This is a fork-specific merge, not acceptance by the original upstream repository. The original [upstream PR #1](https://github.com/medinajaime/esp32-wakeonlan/pull/1) remains open as a Draft discussion about possible smaller contributions.
 
 ## 3. Verification
 
