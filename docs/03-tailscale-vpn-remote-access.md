@@ -174,3 +174,34 @@ See [Lab 06 — Troubleshooting and connectivity diagnostics](06-esp32-remote-wo
 - [Architecture Overview](ARCHITECTURE.md)
 
 **Result:** Authenticated remote Proxmox administration was functionally demonstrated from outside the home LAN. The ESP32-assisted wake-to-service integration also produced a measured successful result. Neither finding is a production security or endurance certification.
+
+## 8. SSH access extension — November 2026
+
+I extended the remote administration workflow with independent ED25519 client keys on Windows and Android (Termux), key-only SSH authentication and OpenSSH ProxyJump to Ubuntu guests. The guest firewall permits SSH from the jump host rather than individual workstation addresses. A temporary direct-client rule was removed after jump-host access was established.
+
+```sshconfig
+Host jump
+    HostName <AUTHORIZED_HOST_ADDRESS>
+    User <AUTHORIZED_HOST_ACCOUNT>
+    IdentityFile ~/.ssh/id_ed25519_homelab
+    IdentitiesOnly yes
+Host guest
+    HostName <GUEST_LAN_ADDRESS>
+    User <GUEST_ACCOUNT>
+    ProxyJump jump
+    IdentityFile ~/.ssh/id_ed25519_homelab
+    IdentitiesOnly yes
+```
+
+Illustrative configuration only; replace placeholders and provision a separate client key per device. The tested host uses an administrative account; a dedicated least-privilege jump account has not been implemented.
+
+### Validation and troubleshooting
+
+- Authenticated SSH to the host and both guests succeeded from a Windows client after key rotation. Android SSH access had been demonstrated separately.
+- Guest authorized-key inventories confirmed the expected three client identities; revocation on the host was confirmed by the operator.
+- Guest firewall and effective SSH settings were inspected. The Cloud Platforms guest showed password, keyboard-interactive and root SSH login disabled, with public-key authentication enabled.
+- Cloud-init logs recorded regeneration of SSH host keys following provisioning changes. The exact historical instance-ID transition was not captured. Subsequent connections and a guest fingerprint check indicated stability; extended reboot testing was not performed.
+
+For a running guest, manage client access through the appropriate account's authorized_keys rather than repeatedly modifying its provisioning seed. When SSH warns that a host identity changed, verify the server fingerprint through a trusted console before removing the stale known_hosts entry. Do not disable strict host-key checking to work around the warning.
+
+This is a functional SSH access extension, not a production security certification or a new numbered lab. Tailnet access-policy/MFA review and long-duration reliability remain outside this validation.
