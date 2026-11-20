@@ -161,7 +161,7 @@ See [Lab 06 — Troubleshooting and connectivity diagnostics](06-esp32-remote-wo
 - Tailscale connectivity does not replace Proxmox login, Tailnet grants/ACLs, device access control or MFA.
 - A dedicated policy/ACL and MFA hardening audit **has not been validated** by these acceptance tests.
 - The ESP32 adaptation has an **open DERP TLS certificate authentication blocker** and command authorization issues; it is not a production-secure remote management component. See [Lab 06](06-esp32-remote-wol-gateway.md).
-- No long-duration VPN/gateway reliability guarantee, guest network validation or production hardening is claimed.
+- The original acceptance tests in sections 4–5 did not include guest network validation. Section 8 records a later, limited guest SSH access extension. Neither establishes comprehensive guest networking, long-duration VPN/gateway reliability or production hardening.
 - The [LAN Magic Packet sender](../scripts/Wake-Proxmox.ps1) and [ESP32/Tailscale remote sender](../scripts/Wake-Proxmox-VPN.ps1) are separate published workflows. The **31.7-second** result above comes from a controlled measurement procedure, not from a validated timing run of the current interactive launcher. See [wake diagnostics](WAKE-TESTING.md).
 
 ## 7. Related labs
@@ -197,11 +197,11 @@ Illustrative configuration only; replace placeholders and provision a separate c
 
 ### Validation and troubleshooting
 
-- Authenticated SSH to the host and both guests succeeded from a Windows client after key rotation. Android SSH access had been demonstrated separately.
-- Guest authorized-key inventories confirmed the expected three client identities; revocation on the host was confirmed by the operator.
+- Authenticated SSH to the host and both guests succeeded from a Windows client after key rotation, as recorded in the November closure. Earlier Android SSH access was recorded separately. A full post-rotation test across all clients and a separate off-LAN regression were not performed.
+- The guest CLI inventories recorded the expected three client identities and revocation on both guests. Revocation on the host was confirmed by the operator.
 - Guest firewall and effective SSH settings were inspected. The Cloud Platforms guest showed password, keyboard-interactive and root SSH login disabled, with public-key authentication enabled.
 - Cloud-init logs recorded regeneration of SSH host keys following provisioning changes. The exact historical instance-ID transition was not captured. Subsequent connections and a guest fingerprint check indicated stability; extended reboot testing was not performed.
 
 For a running guest, manage client access through the appropriate account's authorized_keys rather than repeatedly modifying its provisioning seed. When SSH warns that a host identity changed, verify the server fingerprint through a trusted console before removing the stale known_hosts entry. Do not disable strict host-key checking to work around the warning.
 
-This is a functional SSH access extension, not a production security certification or a new numbered lab. Tailnet access-policy/MFA review and long-duration reliability remain outside this validation.
+This is a functional SSH access extension, not a production security certification or a new numbered lab. Tailnet access-policy/MFA review and long-duration reliability remain outside this validation. These are documented historical results; no runtime tests were rerun for this documentation update.
